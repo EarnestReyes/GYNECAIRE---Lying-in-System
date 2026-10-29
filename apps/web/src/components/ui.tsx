@@ -1,4 +1,4 @@
-import { useEffect, useRef, type PropsWithChildren, type ReactNode } from 'react';
+import { useEffect, useId, useRef, type PropsWithChildren, type ReactNode } from 'react';
 import { Icon, type IconName } from './icon';
 
 export function Brand({ compact = false }: { compact?: boolean }) {
@@ -19,15 +19,16 @@ export function PageHeading({ eyebrow = 'CLINIC WORKSPACE', title, description, 
 export function Panel({ title, action, children, className = '' }: PropsWithChildren<{ title: string; action?: ReactNode; className?: string }>) {
   return <section className={`panel ${className}`}><header className="panel-heading"><h2>{title}</h2>{action}</header>{children}</section>;
 }
-export function Modal({ title, children, close }: PropsWithChildren<{ title: string; close: () => void }>) {
+export function Modal({ title, children, close, busy=false }: PropsWithChildren<{ title: string; close: () => void; busy?:boolean }>) {
   const ref = useRef<HTMLDialogElement>(null);
+  const titleId=useId();
   useEffect(() => {
     const previous = document.activeElement;
     const dialog = ref.current;
     dialog?.showModal();
     return () => { dialog?.close(); if (previous instanceof HTMLElement && previous.isConnected) previous.focus(); };
   }, []);
-  return <dialog ref={ref} className="modal" onCancel={event => { event.preventDefault(); close(); }}><header className="panel-heading"><h2>{title}</h2><button type="button" className="icon-button" aria-label="Close dialog" onClick={close}><Icon name="close" /></button></header>{children}</dialog>;
+  return <dialog ref={ref} className="modal" aria-labelledby={titleId} aria-busy={busy} onCancel={event => { event.preventDefault(); if(!busy)close(); }}><header className="panel-heading"><h2 id={titleId}>{title}</h2><button type="button" className="icon-button" aria-label="Close dialog" disabled={busy} onClick={close}><Icon name="close" /></button></header>{children}</dialog>;
 }
 export function Pagination({ page, total, size, setPage }: { page: number; total: number; size: number; setPage: (page: number) => void }) {
   return <div className="pagination"><span>{total ? `${(page-1)*size+1}–${Math.min(page*size,total)} of ${total}` : '0 results'}</span><div><button className="button secondary small" disabled={page <= 1} onClick={() => setPage(page-1)}>Previous</button><button className="button secondary small" disabled={page*size >= total} onClick={() => setPage(page+1)}>Next</button></div></div>;

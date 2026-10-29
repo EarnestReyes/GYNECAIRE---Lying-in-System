@@ -22,4 +22,17 @@
 .import-workspace progress { width: 120px; accent-color: #8d315f; }
 .import-pagination { border: 0; padding: 0; margin: 0; min-width: 0; }
 .import-pagination:disabled { opacity: .65; }
+.import-workspace-nav { display:flex; gap:12px; flex-wrap:wrap; }
+.import-stage,.import-setup { padding:var(--card-padding); }
+.import-stage h3 { margin-bottom:10px; }.import-stage > p { margin-bottom:16px; line-height:1.8; }
+.import-setup { max-width:850px; }.import-setup p { margin:12px 0; color:var(--muted); line-height:1.8; }.import-setup details { background:var(--background); padding:16px; border-radius:var(--radius-control); }
+.import-steps { padding:0 var(--card-padding); }.import-steps li { padding:0; font-size:var(--font-caption); background:var(--background); }
+.import-steps li.active { background:var(--blush); color:var(--primary); }.import-steps button { width:100%; min-height:48px; padding:10px; color:inherit; background:transparent; border:0; text-align:left; border-radius:var(--radius-control); font-size:var(--font-caption); }
+.import-steps span { background:var(--surface); color:var(--primary); }
+.import-mapping label { font-size:var(--font-secondary); }
+.import-mapping-summary { margin:0; display:grid; grid-template-columns:1fr 1fr; gap:16px; }.import-mapping-summary dt { color:var(--muted); font-size:var(--font-caption); }.import-mapping-summary dd { margin:4px 0; font-weight:600; }
+.import-summary-counts { display:grid; grid-template-columns:1fr 1fr; gap:20px; }.import-summary-counts > div { background:var(--background); border-radius:var(--radius-card); padding:20px; }.import-summary-counts strong { display:block; font-size:30px; }.import-summary-counts span { color:var(--muted); }
+.import-preview { max-height:640px; }.import-preview td { min-width:100px; max-width:420px; }.import-preview td:nth-child(2) { min-width:220px; }.import-preview td:nth-child(3) { min-width:260px; }
+.import-job-heading { margin:0; padding:var(--card-padding); background:var(--background); }.import-job-actions { padding:var(--card-padding); border-top:1px solid var(--border); }.import-workspace details { font-size:var(--font-secondary); }
+@media(max-width:720px){.import-mapping-summary,.import-summary-counts { grid-template-columns:1fr; }.import-steps button { padding:8px; }.import-steps span { margin-right:4px; }}
 @media (max-width: 720px) { .import-steps { grid-template-columns: repeat(3,minmax(0,1fr)); } .import-job-heading { align-items: flex-start; flex-direction: column; } }

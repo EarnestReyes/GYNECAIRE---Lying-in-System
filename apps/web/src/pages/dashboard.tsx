@@ -26,13 +26,13 @@ export function Dashboard({ user }: { user: StaffIdentity }) {
         {data?.schedule.length ? <div className="table-scroll"><table><thead><tr><th>Patient</th><th>Service</th><th>Time</th><th>Status</th></tr></thead><tbody>{data.schedule.map(item => <tr key={item.id}><td><strong>{item.full_name}</strong><small>{item.patient_number}</small></td><td>{item.appointment_type}</td><td>{new Intl.DateTimeFormat('en-PH', { timeZone: 'Asia/Manila', hour: 'numeric', minute: '2-digit' }).format(new Date(item.appointment_date))}</td><td><Badge tone={item.status}>{item.status}</Badge></td></tr>)}</tbody></table></div> : <Empty title={data ? 'A little room in today’s schedule' : 'Your schedule will appear here'} icon="appointments">{data ? 'No appointments are recorded for today.' : 'Connect to the clinic service to load appointments.'}</Empty>}
         {data && <p className="panel-note">Showing up to 20 appointments for today in Asia/Manila.</p>}
       </Panel>
-      <Panel title="Patient overview" action={<Badge>Year to date</Badge>}>
+      <Panel title="Completed visit trends" action={<Badge>Year to date</Badge>}>
         <ResourceState {...trends} retry={trends.refresh} />
         {trends.data?.visits.some(item => item.visits > 0) ? <VisitChart visits={trends.data.visits} /> : !trends.loading && !trends.error && <Empty title="No completed visits to chart" icon="reports">Visit trends will appear as completed appointments are recorded.</Empty>}
         <p className="panel-note">Monthly completed visits from January 1 to today. Based on recorded appointments.</p>
       </Panel>
       <Panel title="Quick actions">
-        <div className="quick-actions">{([['patients','Add or find a patient','patients'],['appointments','Schedule an appointment','appointments'],['checkups','Clinical checkups','checkups'],['reports','View clinic reports','reports']] as const).map(([page,label,icon]) => <button key={page} onClick={() => navigate(page)}><span className="quick-icon"><Icon name={icon} /></span>{label}<Icon name="arrow" size={16} /></button>)}</div>
+        <div className="quick-actions">{([['patients','Add or find a patient','patients'],['appointments','Schedule an appointment','appointments'],['checkups','Completed consultation history','checkups'],['reports','View clinic reports','reports']] as const).map(([page,label,icon]) => <button key={page} onClick={() => navigate(page)}><span className="quick-icon"><Icon name={icon} /></span>{label}<Icon name="arrow" size={16} /></button>)}</div>
         <div className="overview-numbers"><div><span>Verification pending</span><strong>{data?.pending_requests ?? '—'}</strong></div><div><span>Appointments pending</span><strong>{data?.pending_appointments ?? '—'}</strong></div></div>
       </Panel>
       <Panel title="Recent activity">

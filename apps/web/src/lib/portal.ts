@@ -8,7 +8,7 @@ export interface PatientDetail extends Patient { appointments: Appointment[] }
 export interface PageResult<T> { items: T[]; total: number; page: number; page_size: number }
 export interface Overview { total_patients: number; today_appointments: number; pending_requests: number; pending_appointments: number; schedule: Appointment[]; activity: { id: string; action: string; entity_type: string; created_at: string }[] }
 export interface Report { visits: { month: string; visits: number }[]; services: { service: string; count: number }[]; new_patients: number }
-export interface Member { id: string; full_name: string; staff_role: StaffRole; is_active: boolean; created_at: string }
+export interface Member { id: string; full_name: string; staff_role: StaffRole; is_active: boolean; created_at: string; is_self:boolean; eligible:boolean }
 export interface Verification { id: string; full_name: string; patient_kind: string | null; date_of_birth: string | null; contact_number: string | null; created_at: string }
 
 export async function staffApi<T>(path: string, options: { method?: string; body?: unknown; file?: File; signal?: AbortSignal } = {}): Promise<T> {

@@ -52,7 +52,7 @@ export function requireStaff(...allowedRoles: StaffRole[]) {
 
       next();
     } catch (error) {
-      console.error("Staff authorization failed:", error);
+      console.error("Staff authorization could not be verified");
 
       res.status(500).json({
         error: "Unable to verify permissions",

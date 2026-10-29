@@ -1,21 +1,12 @@
+@import "./design-tokens.css";
 ﻿:root {
   font-family: 'Segoe UI', Inter, -apple-system, BlinkMacSystemFont, sans-serif;
-  color: #282239;
-  background: #fbf8fb;
+  color: var(--text);
+  background: var(--background);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  --primary: #8d315f;
-  --primary-dark: #6c224b;
-  --plum: #4b153b;
-  --rose: #e78aa9;
-  --blush: #fceaf0;
-  --surface: #ffffff;
-  --background: #fbf8fb;
-  --muted: #786875;
-  --border: #eee5ed;
-  --shadow: 0 3px 18px #4b153b04;
-  font-size: 14px;
+  font-size: var(--font-body);
   line-height: 1.55;
   color-scheme: light;
 }
@@ -34,7 +25,7 @@ h2 { font-size: 16px; line-height: 1.4; font-weight: 650; }
 h3 { font-size: 15px; font-weight: 600; }
 small { font-size: 12px; }
 svg { flex-shrink: 0; vertical-align: middle; }
-input, select, textarea { border: 1px solid #e4dce7; border-radius: 7px; background: #fefcfe; color: #322a3e; padding: 10px 12px; min-width: 0; width: 100%; }
+input, select, textarea { border: 1px solid #e4dce7; border-radius: 7px; background: var(--surface-subtle); color: var(--text); padding: 10px 12px; min-width: 0; width: 100%; }
 input::placeholder, textarea::placeholder { color: #8b8190; font-size: 12px; }
 input:disabled, textarea:disabled, select:disabled { background: #faf7fa; color: var(--muted); }
 label { display: grid; gap: 7px; font-size: 12px; font-weight: 600; }

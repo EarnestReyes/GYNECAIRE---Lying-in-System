@@ -5,7 +5,7 @@ import { Empty, PageHeading, Panel, ResourceState } from '../components/ui';
 import { Icon } from '../components/icon';
 
 const colors = ['#A13E71','#E9A4BF','#9896CF','#91C4CD','#DBBB91'];
-function csvCell(value: string | number) { const text = String(value); return `"${(/^[=+\-@\t\r]/.test(text) ? `'${text}` : text).replace(/"/g,'""')}"`; }
+function csvCell(value: string | number) { const text = String(value); return `"${(/^\s*[=+\-@]/.test(text) ? `'${text}` : text).replace(/"/g,'""')}"`; }
 
 export function Reports() {
   const today = manilaDate(); const [from, setFrom] = useState(`${today.slice(0,4)}-01-01`); const [to, setTo] = useState(today);

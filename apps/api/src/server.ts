@@ -4,6 +4,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
+import { apiErrorHandler } from './middleware/error-handler.js';
 import staffRoutes from "./routes/staff.js";
 import accountRoutes from "./routes/account.js";
 import verificationReviewRoutes from "./routes/verification-review.js";
@@ -43,6 +44,7 @@ app.use("/api/v1/staff", staffRoutes);
 app.use("/api/v1/staff", portalRoutes);
 app.use("/api/v1/account", accountRoutes);
 app.use("/api/v1/staff/verifications", verificationReviewRoutes);
+app.use(apiErrorHandler);
 
 // Also schedule this cleanup externally if the API can sleep. Never logs patient data.
 if (process.env.IMPORTS_ENABLED === 'true' || process.env.IMPORT_RETENTION_ENABLED === 'true') {

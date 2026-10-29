@@ -12,7 +12,8 @@
     "test:imports": "tsc --rootDir src --outDir .test-output/imports --declaration false --declarationMap false --sourceMap false && node -e \"require('fs').copyFileSync('src/imports/parse-worker.cjs','.test-output/imports/imports/parse-worker.cjs')\" && node --test --test-isolation=none .test-output/imports/imports/*.test.js",
     "typecheck": "tsc --noEmit",
     "test:imports:release": "node -e \"for (const p of ['csv-parse','exceljs','yauzl']) require.resolve(p)\" && npm run test:imports",
-    "test:settings": "tsc --rootDir src --outDir .test-output/settings --declaration false --declarationMap false --sourceMap false && node --test --test-isolation=none .test-output/settings/validation/settings.test.js .test-output/settings/routes/settings-profile.test.js"
+    "test:settings": "tsc --rootDir src --outDir .test-output/settings --declaration false --declarationMap false --sourceMap false && node --test --test-isolation=none .test-output/settings/validation/settings.test.js .test-output/settings/routes/settings-profile.test.js",
+    "test:portal-http": "tsc --rootDir src --outDir .test-output/portal-http --declaration false --declarationMap false --sourceMap false && node --test --test-isolation=none .test-output/portal-http/routes/portal-router.test.js .test-output/portal-http/routes/staff-access.test.js"
   },
   "keywords": [],
   "author": "",

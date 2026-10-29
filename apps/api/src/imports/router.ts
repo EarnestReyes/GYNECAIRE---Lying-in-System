@@ -14,6 +14,13 @@ import { ImportError, transaction, event, lockJob, validateRows, readRow, confir
 const require=createRequire(import.meta.url);
 export function readiness(){let encrypted=true,libraries=true;try{encryptionKey();}catch{encrypted=false;}try{for(const name of ['csv-parse','exceljs','yauzl'])require.resolve(name);}catch{libraries=false;}const approved=process.env.IMPORTS_ENABLED==='true';return {enabled:approved&&encrypted&&libraries&&scannerReady(),approved,encryption:encrypted,scanner:scannerReady(),libraries};}
 let activeUploads=0;
+export async function importDatabaseReady(pool:Pick<Pool,'query'>){
+ try{await pool.query(`SELECT j.id,j.source_cipher,j.headers,j.mapping,j.revision,j.expires_at,
+  r.row_number,r.data_cipher,r.issues,r.warnings,r.matches,r.decision,
+  p.source_identifier_hash,p.source_identifier_cipher,p.source_file_hash,e.details
+  FROM public.patient_import_jobs j CROSS JOIN public.patient_import_rows r
+  CROSS JOIN public.patient_import_provenance p CROSS JOIN public.patient_import_events e WHERE false`);return true;}catch{return false;}
+}
 export function createImportRouter(pool:Pool,authentication:RequestHandler=authenticate,dependencies={parseFile,scanFile,readiness}){
  const router=Router();router.use((_req,res,next)=>{res.set('Cache-Control','no-store');res.set('X-Content-Type-Options','nosniff');next();},authentication);
  // Administrator policy is intrinsic to this router: callers cannot omit it.
@@ -25,7 +32,7 @@ export function createImportRouter(pool:Pool,authentication:RequestHandler=authe
  });
  router.use(rateLimit({windowMs:60000,limit:120,standardHeaders:'draft-8',legacyHeaders:false,message:{error:'Too many import requests. Please wait a minute.'}}));
  router.use(express.json({limit:'64kb'}));
- router.get('/capabilities',(_req,res)=>{res.json({...dependencies.readiness(),formats:['csv','xlsx'],max_bytes:MAX_BYTES,max_rows:10000,retention_hours:24});});
+ router.get('/capabilities',async(_req,res)=>{const configuration=dependencies.readiness(),database=await importDatabaseReady(pool);res.json({...configuration,enabled:configuration.enabled&&database,database,formats:['csv','xlsx'],max_bytes:MAX_BYTES,max_rows:10000,retention_hours:24});});
  router.param('id',(req,res,next,id)=>{if(!z.uuid().safeParse(id).success){res.status(400).json({error:'Invalid import job'});return;}next();});
  const handle=(work:(req:AuthenticatedRequest,res:express.Response)=>Promise<void>):RequestHandler=>(req,res)=>{res.locals.importRunning=true;void work(req,res).catch(error=>{if(!res.headersSent)res.status(error instanceof ImportError?error.status:503).json({error:error instanceof ImportError?error.message:'Import service unavailable. Check configuration and migration 004.'});}).finally(()=>{res.locals.importRunning=false;res.locals.releaseImportSlot?.();});};
  router.post('/',handle(async(req,res)=>{
