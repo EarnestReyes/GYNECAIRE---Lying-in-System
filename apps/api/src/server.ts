@@ -7,6 +7,7 @@ import helmet from "helmet";
 import staffRoutes from "./routes/staff.js";
 import accountRoutes from "./routes/account.js";
 import verificationReviewRoutes from "./routes/verification-review.js";
+import portalRoutes from "./routes/portal.js";
 
 const app = express();
 const PORT = Number(process.env.PORT) || 5000;
@@ -34,6 +35,7 @@ app.get("/api/v1/health", (_req, res) => {
 
 // Protected staff routes
 app.use("/api/v1/staff", staffRoutes);
+app.use("/api/v1/staff", portalRoutes);
 app.use("/api/v1/account", accountRoutes);
 app.use("/api/v1/staff/verifications", verificationReviewRoutes);
 

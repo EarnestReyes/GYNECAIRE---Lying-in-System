@@ -1,0 +1,11 @@
+import { useState } from 'react';
+import { useResource } from '../hooks/use-resource';
+import { dateLabel, initials, type Member } from '../lib/portal';
+import { Badge, Empty, PageHeading, Panel, ResourceState } from '../components/ui';
+import { Icon } from '../components/icon';
+
+export function Staff() {
+  const resource = useResource<Member[]>('/members'); const [search, setSearch] = useState(''); const [filter, setFilter] = useState('all');
+  const members = resource.data?.filter(item => item.full_name.toLowerCase().includes(search.toLowerCase()) && (filter === 'all' || (filter === 'active' ? item.is_active : !item.is_active)));
+  return <><PageHeading title="Staff Management" description="The people behind every thoughtful moment of care." action={<button className="button" disabled><Icon name="plus" size={17} />Invite staff</button>} /><Panel title="Clinic team" action={<Badge>Administrator access</Badge>}><div className="table-toolbar"><label className="search-form"><Icon name="search" size={17} /><input aria-label="Search staff" placeholder="Find a team member…" value={search} onChange={event => setSearch(event.target.value)} /></label><div className="filter-tabs">{['all','active','inactive'].map(item => <button key={item} className={filter === item ? 'active' : ''} onClick={() => setFilter(item)}>{item}</button>)}</div></div><ResourceState {...resource} retry={resource.refresh} />{members && <><div className="table-scroll"><table><thead><tr><th>Team member</th><th>Role</th><th>Status</th><th>Added</th></tr></thead><tbody>{members.map(member => <tr key={member.id}><td><div className="person-cell"><span className="avatar small">{initials(member.full_name)}</span><strong>{member.full_name}</strong></div></td><td className="capitalize">{member.staff_role === 'admin' ? 'Administrator' : member.staff_role}</td><td><Badge tone={member.is_active ? 'confirmed' : 'neutral'}>{member.is_active ? 'Active' : 'Inactive'}</Badge></td><td>{dateLabel(member.created_at)}</td></tr>)}</tbody></table></div>{!members.length && <Empty title="No team members in this view" icon="staff">Try a different name or status filter.</Empty>}</>}<p className="panel-note">Invitations, role changes, and deactivation require a separate audited administration workflow. They are not available in this view.</p></Panel></>;
+}

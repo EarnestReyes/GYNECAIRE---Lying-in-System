@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx watch src/server.ts",
     "start": "tsx src/server.ts",
-    "test:onboarding": "tsc --ignoreConfig --module nodenext --target es2022 --types node --skipLibCheck --outDir .test-output src/validation/onboarding.ts src/validation/onboarding.test.ts && node --test --test-isolation=none .test-output/onboarding.test.js"
+    "test:onboarding": "tsc --ignoreConfig --module nodenext --target es2022 --types node --skipLibCheck --outDir .test-output src/validation/onboarding.ts src/validation/onboarding.test.ts && node --test --test-isolation=none .test-output/onboarding.test.js",
+    "test:portal": "tsc --ignoreConfig --module nodenext --target es2022 --types node --skipLibCheck --outDir .test-output src/validation/portal.ts src/validation/portal.test.ts && node --test --test-isolation=none .test-output/portal.test.js"
   },
   "keywords": [],
   "author": "",

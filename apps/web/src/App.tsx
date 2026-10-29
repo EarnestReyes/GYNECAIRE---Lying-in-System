@@ -1,272 +1,87 @@
-
-import { useEffect, useState } from "react";
-import {
-  signIn,
-  signOut,
-  verifyStaffAccess,
-} from "./lib/auth";
-import { supabase } from "./lib/supabase";
-
-type PortalState = "loading" | "login" | "dashboard";
+﻿import { useCallback, useEffect, useRef, useState } from 'react';
+import { signOut } from './lib/auth';
+import { supabase } from './lib/supabase';
+import { staffApi, type StaffIdentity } from './lib/portal';
+import { Login } from './components/login';
+import { Shell } from './components/shell';
+import { readPage } from './lib/navigation';
+import { Empty } from './components/ui';
+import { Dashboard } from './pages/dashboard';
+import { Patients } from './pages/patients';
+import { Appointments } from './pages/appointments';
+import { MedicalRecords, Checkups, Inventory } from './pages/clinical';
+import { Reports } from './pages/reports';
+import { Staff } from './pages/staff';
+import { Settings } from './pages/settings';
+import { Messages } from './pages/messages';
+import './App.css';
 
 export default function App() {
-  const [page, setPage] = useState<PortalState>("loading");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [currentEmail, setCurrentEmail] = useState("");
+  const [mode, setMode] = useState<'loading' | 'login' | 'portal' | 'recovery'>('loading');
+  const [user, setUser] = useState<StaffIdentity | null>(null);
+  const [page, setPage] = useState(readPage);
+  const [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
+  const recovery = useRef(false);
+  const authGeneration = useRef(0);
+  const lastUserId = useRef<string | null>(null);
+
+  const authorize = useCallback(async () => {
+    const generation = authGeneration.current;
+    try {
+      const identity = await staffApi<StaffIdentity>('/session');
+      if (generation !== authGeneration.current) return;
+      recovery.current = false;
+      setUser(identity); setMode('portal'); setError('');
+    } catch (error) {
+      await signOut();
+      throw error;
+    }
+  }, []);
 
   useEffect(() => {
     let active = true;
-
-    async function restoreSession() {
-      try {
-        await verifyStaffAccess();
-
-        const { data } = await supabase.auth.getUser();
-
-        if (active) {
-          setCurrentEmail(data.user?.email || "");
-          setPage("dashboard");
-        }
-      } catch {
-        if (active) setPage("login");
+    const lost = () => { if (active) { authGeneration.current++; setUser(null); setMode('login'); setError('Your session or staff access has changed. Please sign in again.'); } };
+    const hash = () => setPage(readPage());
+    window.addEventListener('portal-access-lost', lost);
+    window.addEventListener('hashchange', hash);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!active) return;
+      if (event === 'PASSWORD_RECOVERY') { authGeneration.current++; recovery.current = true; setUser(null); setMode('recovery'); }
+      if (event === 'SIGNED_OUT') { authGeneration.current++; lastUserId.current = null; setUser(null); setMode('login'); }
+      if (session && event !== 'PASSWORD_RECOVERY') {
+        if (lastUserId.current && lastUserId.current !== session.user.id) lost();
+        lastUserId.current = session.user.id;
       }
+    });
+    async function restore() {
+      const generation = authGeneration.current;
+      try {
+        const { data } = await supabase.auth.getSession();
+        if (!active || recovery.current) return;
+        if (!data.session) { setMode('login'); return; }
+        const identity = await staffApi<StaffIdentity>('/session');
+        if (active && generation === authGeneration.current && !recovery.current) { setUser(identity); setMode('portal'); }
+      } catch (error) { if (active && !recovery.current) { setUser(null); setMode('login'); setError(error instanceof Error ? error.message : 'Unable to verify staff access.'); } }
     }
-
-    void restoreSession();
-
-    return () => {
-      active = false;
-    };
+    void restore();
+    return () => { active = false; subscription.unsubscribe(); window.removeEventListener('portal-access-lost', lost); window.removeEventListener('hashchange', hash); };
   }, []);
 
-  async function handleLogin(event: React.FormEvent) {
-    event.preventDefault();
-    setLoading(true);
-    setMessage("");
-
-    try {
-      const { data, error } = await signIn(email, password);
-
-      if (error) {
-        setMessage(error.message);
-        return;
-      }
-
-      try {
-        await verifyStaffAccess();
-      } catch (accessError) {
-        await signOut();
-        throw accessError;
-      }
-
-      setCurrentEmail(data.user?.email || "");
-      setPage("dashboard");
-      setPassword("");
-    } catch (error) {
-      setMessage(
-        error instanceof Error
-          ? error.message
-          : "Unable to sign in."
-      );
-    } finally {
-      setLoading(false);
-    }
+  async function logout() {
+    setBusy(true); setError('');
+    try { const { error } = await signOut(); if (error) throw error; setUser(null); setMode('login'); }
+    catch { setError('Unable to sign out. Please try again.'); }
+    finally { setBusy(false); }
   }
 
-  async function handleLogout() {
-    setLoading(true);
-
-    try {
-      const { error } = await signOut();
-
-      if (error) throw error;
-
-      setPage("login");
-      setCurrentEmail("");
-      setPassword("");
-      setMessage("");
-    } catch {
-      setMessage("Unable to sign out. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  if (page === "loading") {
-    return (
-      <main style={styles.center}>
-        <p>Verifying GYNECAIRE staff access...</p>
-      </main>
-    );
-  }
-
-  if (page === "dashboard") {
-    return (
-      <main style={styles.container}>
-        <header style={styles.header}>
-          <div>
-            <h1>GYNECAIRE</h1>
-            <p>Staff Management Portal</p>
-          </div>
-
-          <button
-            onClick={handleLogout}
-            disabled={loading}
-            style={styles.button}
-          >
-            Sign Out
-          </button>
-        </header>
-
-        <section style={styles.card}>
-          <h2>Welcome to GYNECAIRE</h2>
-          <p>Signed in as: {currentEmail}</p>
-          <p>
-            Your staff account has been verified by the
-            GYNECAIRE backend.
-          </p>
-        </section>
-
-        <section style={styles.card}>
-          <h3>Dashboard foundation</h3>
-          <p>
-            Patient management, appointments, clinical
-            records, inventory, and reporting will be
-            connected here after their APIs are secured.
-          </p>
-        </section>
-      </main>
-    );
-  }
-
-  return (
-    <main style={styles.center}>
-      <section style={styles.loginCard}>
-        <h1>GYNECAIRE</h1>
-        <p>Authorized Staff Portal</p>
-
-        <form onSubmit={handleLogin} style={styles.form}>
-          <label>
-            Email address
-            <input
-              type="email"
-              value={email}
-              onChange={(event) =>
-                setEmail(event.target.value)
-              }
-              required
-              autoComplete="username"
-              style={styles.input}
-            />
-          </label>
-
-          <label>
-            Password
-            <input
-              type="password"
-              value={password}
-              onChange={(event) =>
-                setPassword(event.target.value)
-              }
-              required
-              autoComplete="current-password"
-              style={styles.input}
-            />
-          </label>
-
-          <button
-            type="submit"
-            disabled={loading}
-            style={styles.button}
-          >
-            {loading ? "Verifying..." : "Sign In"}
-          </button>
-        </form>
-
-        {message && (
-          <p role="alert" style={styles.error}>
-            {message}
-          </p>
-        )}
-
-        <p style={styles.note}>
-          This portal is restricted to authorized
-          clinic personnel.
-        </p>
-      </section>
-    </main>
-  );
+  if (mode === 'loading') return <main className="boot-screen"><span className="spinner" /><p>Verifying GYNECAIRE staff access…</p></main>;
+  if (mode !== 'portal' || !user) return <Login key={mode} recovery={mode === 'recovery'} onAuthenticated={authorize} initialError={error} />;
+  const pages = {
+    dashboard: <Dashboard user={user} />, patients: <Patients />, appointments: <Appointments />,
+    records: <MedicalRecords />, checkups: <Checkups />, inventory: <Inventory />,
+    reports: <Reports />, staff: user.staff_role === 'admin' ? <Staff /> : <Empty title="Administrator access required" icon="lock">Staff management is restricted to clinic administrators.</Empty>,
+    settings: <Settings user={user} />, messages: <Messages />,
+  };
+  return <Shell user={user} page={page} logout={logout} busy={busy}>{error && <p role="alert" className="notice error">{error}</p>}<div key={page} className="page-content">{pages[page]}</div></Shell>;
 }
-
-const styles: Record<string, React.CSSProperties> = {
-  center: {
-    minHeight: "100vh",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    background: "#f3f7f8",
-    padding: 24,
-    fontFamily: "Arial, sans-serif",
-  },
-  container: {
-    minHeight: "100vh",
-    background: "#f3f7f8",
-    padding: 32,
-    fontFamily: "Arial, sans-serif",
-  },
-  header: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: 16,
-    marginBottom: 24,
-  },
-  loginCard: {
-    width: "100%",
-    maxWidth: 420,
-    background: "white",
-    borderRadius: 20,
-    padding: 32,
-    boxShadow: "0 12px 40px rgba(0,0,0,0.07)",
-  },
-  form: {
-    display: "grid",
-    gap: 18,
-    marginTop: 28,
-  },
-  input: {
-    display: "block",
-    boxSizing: "border-box",
-    width: "100%",
-    marginTop: 8,
-    padding: 12,
-    border: "1px solid #d5dfe1",
-    borderRadius: 10,
-  },
-  button: {
-    padding: "12px 20px",
-    background: "#176b68",
-    color: "white",
-    border: "none",
-    borderRadius: 10,
-    cursor: "pointer",
-  },
-  card: {
-    background: "white",
-    padding: 28,
-    borderRadius: 18,
-    marginBottom: 20,
-  },
-  error: {
-    color: "#b42318",
-    marginTop: 16,
-  },
-  note: {
-    color: "#687b80",
-    fontSize: 13,
-    marginTop: 24,
-  },
-};

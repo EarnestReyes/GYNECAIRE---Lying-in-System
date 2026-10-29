@@ -7,7 +7,7 @@ import { requireStaff } from '../middleware/authorize.js';
 const router = Router();
 router.use(authenticate, requireStaff('admin', 'midwife', 'nurse', 'receptionist'));
 router.get('/', async (_req, res) => {
- try { const result = await pool.query(`SELECT v.id,v.profile_id,p.full_name,v.patient_kind,v.date_of_birth,v.contact_number,v.created_at FROM public.patient_verifications v JOIN public.profiles p ON p.id=v.profile_id WHERE v.status='pending' ORDER BY v.created_at LIMIT 100`); res.json(result.rows); } catch { res.status(500).json({ error: 'Unable to load requests' }); }
+ try { const result = await pool.query(`SELECT v.id,v.profile_id,p.full_name,v.patient_kind,v.date_of_birth::text,v.contact_number,v.created_at FROM public.patient_verifications v JOIN public.profiles p ON p.id=v.profile_id WHERE v.status='pending' ORDER BY v.created_at LIMIT 100`); res.set('Cache-Control','no-store').json(result.rows); } catch { res.status(500).json({ error: 'Unable to load requests' }); }
 });
 router.post('/:id/decision', async (req: AuthenticatedRequest, res) => {
  const parsed = decisionSchema.safeParse(req.body); if (!z.uuid().safeParse(req.params.id).success || !parsed.success) { res.status(400).json({ error: 'Invalid decision. Approval requires an existing clinic patient and identity verification.' }); return; }
