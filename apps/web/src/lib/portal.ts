@@ -11,7 +11,7 @@ export interface Report { visits: { month: string; visits: number }[]; services:
 export interface Member { id: string; full_name: string; staff_role: StaffRole; is_active: boolean; created_at: string }
 export interface Verification { id: string; full_name: string; patient_kind: string | null; date_of_birth: string | null; contact_number: string | null; created_at: string }
 
-export async function staffApi<T>(path: string, options: { method?: string; body?: unknown; signal?: AbortSignal } = {}): Promise<T> {
+export async function staffApi<T>(path: string, options: { method?: string; body?: unknown; file?: File; signal?: AbortSignal } = {}): Promise<T> {
   const { data, error } = await supabase.auth.getSession();
   if (error || !data.session) {
     window.dispatchEvent(new Event('portal-access-lost'));
@@ -19,8 +19,8 @@ export async function staffApi<T>(path: string, options: { method?: string; body
   }
   const response = await fetch(`${(import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, '')}/api/v1/staff${path}`, {
     method: options.method || 'GET', signal: options.signal, cache: 'no-store',
-    headers: { Authorization: `Bearer ${data.session.access_token}`, ...(options.body === undefined ? {} : { 'Content-Type': 'application/json' }) },
-    ...(options.body === undefined ? {} : { body: JSON.stringify(options.body) }),
+    headers: { Authorization: `Bearer ${data.session.access_token}`, ...(options.file ? {'Content-Type':'application/octet-stream'} : options.body === undefined ? {} : { 'Content-Type': 'application/json' }) },
+    ...(options.file ? {body:options.file} : options.body === undefined ? {} : { body: JSON.stringify(options.body) }),
   });
   if (response.status === 401 || response.status === 403) {
     // Clear mounted clinical views immediately if the backend revokes access.

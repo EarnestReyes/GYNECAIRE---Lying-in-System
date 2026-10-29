@@ -15,6 +15,7 @@ web-build/
 # Logs
 *.log
 npm-debug.log*
+.codex/npm-cache/
 
 # Operating system
 .DS_Store

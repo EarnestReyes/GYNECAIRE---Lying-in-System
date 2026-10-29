@@ -1,0 +1,222 @@
+# GYNECAIRE — Redesign Admin/Staff Settings Inspired by Careline
+
+Act as a Senior React UI/UX Engineer, Product Designer, and Full-Stack Security Engineer.
+
+Redesign the GYNECAIRE Admin/Staff Web Portal Settings page to match the polished, professional, interactive settings experience of my previous Careline Record Management System.
+
+Use Careline's settings page as the design and interaction reference, but preserve GYNECAIRE's own visual identity.
+
+## 1. Inspect Existing Implementations
+
+First inspect:
+
+- `apps/web` settings page and shared layout.
+- Existing account and profile components.
+- Supabase authentication integration.
+- Backend staff authorization.
+- Database profile and staff schemas.
+- Existing theme and preference systems.
+
+If the Careline repository is accessible locally, inspect its actual Settings implementation and reuse suitable interaction patterns and design principles.
+
+Do not claim to have reproduced Careline exactly unless its reference implementation or screenshots were available.
+
+## 2. Redesign the Settings Layout
+
+Replace the current oversized static card layout with a modern, organized settings workspace.
+
+Use:
+
+- A compact page header.
+- A short supporting description.
+- A polished profile summary.
+- Clear settings navigation.
+- Consistent content panels.
+- Responsive two-column layout on desktop where appropriate.
+- Single-column layout on tablets and mobile.
+- Consistent spacing, borders, and typography.
+- Clear primary and secondary actions.
+
+Suggested settings navigation:
+
+1. My Profile
+2. Account Security
+3. Appearance
+4. Clinic Configuration
+5. Notifications
+6. Privacy & Account
+
+Keep the existing sidebar navigation intact.
+
+## 3. My Profile
+
+Create a professional account profile section with:
+
+- Profile avatar or initials fallback.
+- Full name.
+- Email address.
+- Contact number.
+- Staff role.
+- Account status.
+- Edit Profile button.
+- Save and Cancel actions.
+
+Allow authorized updates to permitted personal fields.
+
+Do not allow users to edit their own role, administrator privileges, or staff verification status.
+
+Validate and persist changes using the existing backend or Supabase architecture.
+
+Never display a successful save message unless the update actually succeeded.
+
+## 4. Account Security
+
+Improve the password management interface.
+
+Include:
+
+- Current password verification or an appropriate secure reauthentication flow.
+- New password.
+- Confirm password.
+- Password visibility controls.
+- Password strength guidance.
+- Validation feedback.
+- Loading and success states.
+- Secure password update through Supabase Auth.
+
+Never store passwords in application tables or logs.
+
+Provide a password recovery option where appropriate.
+
+## 5. Appearance Preferences
+
+Add a functional appearance section:
+
+- Light mode.
+- Dark mode.
+- System default.
+
+Ensure the chosen theme applies consistently across the web portal.
+
+Persist the preference appropriately.
+
+Preserve GYNECAIRE's visual identity in both themes.
+
+## 6. Clinic Configuration
+
+For authorized administrators, implement editable clinic settings when supported by the existing backend.
+
+Potential fields:
+
+- Clinic name.
+- Clinic contact information.
+- Clinic address.
+- Operating hours.
+- Appointment policies.
+- Available services.
+
+Create secure backend endpoints and an additive database migration if needed.
+
+Do not invent clinic information.
+
+Do not allow ordinary staff to change administrator-only settings.
+
+If backend support is not ready, clearly mark the section as unavailable rather than presenting a misleading functional button.
+
+## 7. Notifications and Preferences
+
+Create an organized notification settings interface.
+
+Possible preferences:
+
+- Appointment requests.
+- Patient verification requests.
+- Appointment cancellations.
+- Inventory alerts.
+- Administrative announcements.
+
+Only activate toggles for notification channels that are genuinely implemented.
+
+Do not claim email or push notifications are working unless delivery has been verified.
+
+## 8. Privacy and Account
+
+Include:
+
+- Privacy policy.
+- Terms of service.
+- Account information.
+- Sign out.
+- Session and device management if supported.
+
+Use clear confirmation dialogs for sensitive actions.
+
+Do not add account deletion without an approved policy for retaining medical and audit records.
+
+## 9. Improve Visual Design
+
+Use Careline-inspired layout quality:
+
+- Refined profile card.
+- Clear navigation hierarchy.
+- Compact, consistent form controls.
+- Elegant section headings.
+- Meaningful icons.
+- Subtle separators.
+- Balanced whitespace.
+- Consistent button placement.
+- Responsive design.
+
+Preserve GYNECAIRE's:
+
+- Burgundy primary color.
+- Soft blush backgrounds.
+- White surfaces.
+- Deep plum text.
+- Rounded cards.
+- Healthcare-oriented visual style.
+
+Avoid overly large cards, excessive empty space, tiny text, and decorative elements without purpose.
+
+## 10. Backend and Security
+
+Maintain:
+
+- Supabase authentication.
+- Express API authorization.
+- PostgreSQL.
+- Existing staff roles.
+- Audit logging.
+
+Enforce authorization on the server.
+
+Validate all inputs.
+
+Audit sensitive configuration changes.
+
+Do not allow role escalation through profile updates.
+
+Do not modify existing production data or apply migrations without approval.
+
+## 11. Testing
+
+Run:
+
+- Web TypeScript checks.
+- Production build.
+- Relevant validation tests.
+- Authentication and authorization tests where possible.
+- Responsive layout checks.
+- Profile update tests.
+- Password update tests.
+- Theme persistence tests.
+
+Report which features are fully functional and which remain dependent on backend work.
+
+## Final Goal
+
+Make GYNECAIRE's Settings page feel like a premium, professional healthcare administration platform inspired by Careline's settings experience.
+
+It should be visually polished, intuitive, organized, responsive, and functional—not merely a collection of static settings cards.
+
+Implement the improvements directly in the repository.

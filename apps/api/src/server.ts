@@ -8,6 +8,8 @@ import staffRoutes from "./routes/staff.js";
 import accountRoutes from "./routes/account.js";
 import verificationReviewRoutes from "./routes/verification-review.js";
 import portalRoutes from "./routes/portal.js";
+import { createImportRouter, purgeExpiredImports } from './imports/router.js';
+import { pool } from './config/database.js';
 
 const app = express();
 const PORT = Number(process.env.PORT) || 5000;
@@ -21,7 +23,10 @@ app.use(
   })
 );
 
-// Parse incoming JSON requests
+// Import bodies are parsed only after authentication/admin checks, with sanitized errors.
+app.use('/api/v1/staff/imports', createImportRouter(pool));
+
+// Parse incoming JSON requests for the remaining modules.
 app.use(express.json({ limit: "1mb" }));
 
 // Public health check
@@ -38,6 +43,13 @@ app.use("/api/v1/staff", staffRoutes);
 app.use("/api/v1/staff", portalRoutes);
 app.use("/api/v1/account", accountRoutes);
 app.use("/api/v1/staff/verifications", verificationReviewRoutes);
+
+// Also schedule this cleanup externally if the API can sleep. Never logs patient data.
+if (process.env.IMPORTS_ENABLED === 'true' || process.env.IMPORT_RETENTION_ENABLED === 'true') {
+  const cleanup = () => { void purgeExpiredImports(pool).catch(() => console.warn('Import retention cleanup failed; check migration and database permissions.')); };
+  cleanup();
+  setInterval(cleanup, 15 * 60 * 1000).unref();
+}
 
 // Start API server
 app.listen(PORT, () => {

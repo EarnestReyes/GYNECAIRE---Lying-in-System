@@ -8,7 +8,10 @@
     "dev": "tsx watch src/server.ts",
     "start": "tsx src/server.ts",
     "test:onboarding": "tsc --ignoreConfig --module nodenext --target es2022 --types node --skipLibCheck --outDir .test-output src/validation/onboarding.ts src/validation/onboarding.test.ts && node --test --test-isolation=none .test-output/onboarding.test.js",
-    "test:portal": "tsc --ignoreConfig --module nodenext --target es2022 --types node --skipLibCheck --outDir .test-output src/validation/portal.ts src/validation/portal.test.ts && node --test --test-isolation=none .test-output/portal.test.js"
+    "test:portal": "tsc --ignoreConfig --module nodenext --target es2022 --types node --skipLibCheck --outDir .test-output src/validation/portal.ts src/validation/portal.test.ts && node --test --test-isolation=none .test-output/portal.test.js",
+    "test:imports": "tsc --rootDir src --outDir .test-output/imports --declaration false --declarationMap false --sourceMap false && node -e \"require('fs').copyFileSync('src/imports/parse-worker.cjs','.test-output/imports/imports/parse-worker.cjs')\" && node --test --test-isolation=none .test-output/imports/imports/*.test.js",
+    "typecheck": "tsc --noEmit",
+    "test:imports:release": "node -e \"for (const p of ['csv-parse','exceljs','yauzl']) require.resolve(p)\" && npm run test:imports"
   },
   "keywords": [],
   "author": "",
@@ -22,7 +25,10 @@
     "helmet": "^8.3.0",
     "jose": "^6.2.13",
     "pg": "^8.23.1",
-    "zod": "^4.6.7"
+    "zod": "^4.6.7",
+    "csv-parse": "^6.1.0",
+    "exceljs": "^4.4.0",
+    "yauzl": "^3.2.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",

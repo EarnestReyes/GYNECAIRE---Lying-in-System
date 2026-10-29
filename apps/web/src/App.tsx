@@ -78,7 +78,7 @@ export default function App() {
   if (mode === 'loading') return <main className="boot-screen"><span className="spinner" /><p>Verifying GYNECAIRE staff access…</p></main>;
   if (mode !== 'portal' || !user) return <Login key={mode} recovery={mode === 'recovery'} onAuthenticated={authorize} initialError={error} />;
   const pages = {
-    dashboard: <Dashboard user={user} />, patients: <Patients />, appointments: <Appointments />,
+    dashboard: <Dashboard user={user} />, patients: <Patients isAdmin={user.staff_role === 'admin'} />, appointments: <Appointments />,
     records: <MedicalRecords />, checkups: <Checkups />, inventory: <Inventory />,
     reports: <Reports />, staff: user.staff_role === 'admin' ? <Staff /> : <Empty title="Administrator access required" icon="lock">Staff management is restricted to clinic administrators.</Empty>,
     settings: <Settings user={user} />, messages: <Messages />,

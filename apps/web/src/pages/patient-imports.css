@@ -1,0 +1,25 @@
+.import-workspace { display: grid; gap: 22px; }
+.import-steps { list-style: none; display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); padding: 0; margin: 20px 0; gap: 7px; }
+.import-steps li { padding: 10px 7px; background: #f7f3f6; border-radius: 8px; color: #756774; font-size: 11px; }
+.import-steps li.active { background: #fceaf1; color: #803057; }
+.import-steps li[aria-current] { outline: 1px solid #a44d7c; font-weight: 700; }
+.import-steps span { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; margin-right: 6px; border-radius: 50%; background: white; }
+.import-dropzone { padding: 28px 18px; border: 2px dashed #d9b6ca; background: #fffbfd; border-radius: 12px; text-align: center; }
+.import-dropzone.dragging { border-color: #803057; background: #fceaf1; }
+.import-dropzone input { margin: 12px auto; max-width: 100%; }
+.import-job-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 22px 0; }
+.import-mapping { margin: 20px 0; }
+.import-check { display: flex !important; flex-direction: row !important; align-items: flex-start; gap: 10px; line-height: 1.6; }
+.import-check input { flex: 0 0 auto; width: 17px; height: 17px; margin-top: 3px; }
+.import-preview { margin-top: 22px; max-height: 620px; overflow: auto; }
+.import-preview td { white-space: normal; min-width: 95px; max-width: 360px; vertical-align: top; overflow-wrap: anywhere; }
+.import-preview p { margin: 5px 0; line-height: 1.55; }
+.import-preview select { min-width: 160px; }
+.import-preview ul { padding-left: 16px; margin: 0; }
+.import-error { color: #aa2445; }
+.import-workspace details { margin-top: 20px; font-size: 12px; line-height: 1.8; }
+.import-workspace pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+.import-workspace progress { width: 120px; accent-color: #8d315f; }
+.import-pagination { border: 0; padding: 0; margin: 0; min-width: 0; }
+.import-pagination:disabled { opacity: .65; }
+@media (max-width: 720px) { .import-steps { grid-template-columns: repeat(3,minmax(0,1fr)); } .import-job-heading { align-items: flex-start; flex-direction: column; } }
