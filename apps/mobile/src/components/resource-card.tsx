@@ -21,21 +21,10 @@ export function ResourceCard({ resource }: {
     } }
     return <View style={ui.card}>
     <View style={ui.row}>
-    <View style={ui.iconCircle}>
-    <CareIcon name={resource.icon}/>
-    </View>
-    <View style={ui.flex}>
-    <Text accessibilityRole="header" style={ui.cardTitle}>{resource.title}</Text>
-    <Text style={ui.small}>World Health Organization</Text>
-    </View>
-    </View>
-    <Text style={ui.small}>{resource.description}</Text>
-    <View style={[ui.row, { justifyContent: 'space-between', flexWrap: 'wrap' }]}>
-    <Pressable accessibilityRole="link" accessibilityLabel={`Read ${resource.title} on the WHO website`} onPress={open} style={ui.textAction}>
-    <View style={ui.row}>
-    <Text style={ui.link}>Read at WHO</Text>
-    <CareIcon name="external" size={18}/>
-    </View>
+    <Pressable accessibilityRole="link" accessibilityLabel={`Read ${resource.title} on the World Health Organization website`} onPress={open} style={[ui.flex,{ minHeight: 48,justifyContent: 'center' }]}>
+    <Text style={ui.cardTitle}>{resource.title}</Text>
+    <Text style={ui.caption}>World Health Organization</Text>
+    <View style={[ui.row,{ gap: 4 }]}><Text style={ui.link}>Read resource</Text><CareIcon name="external" size={16}/></View>
     </Pressable>
     <Pressable accessibilityRole="button" accessibilityLabel={!session ? 'Sign in to save this resource' : bookmarked ? `Remove ${resource.title} from saved resources` : `Save ${resource.title}`} accessibilityState={{ selected: bookmarked, disabled: !!session && busy }} disabled={!!session && busy} onPress={() => { if (!session)
         router.push('/login');
@@ -43,5 +32,7 @@ export function ResourceCard({ resource }: {
         void toggle(resource.id); }} style={ui.iconButton}>
     <CareIcon name={bookmarked ? 'saved' : 'bookmark'}/>
     </Pressable>
-    </View>{(error || saveError) && <Notice tone="error">{error || saveError}</Notice>}</View>;
+    </View>
+    <Text style={ui.small}>{resource.description}</Text>
+    {(error || saveError) && <Notice tone="error">{error || saveError}</Notice>}</View>;
 }

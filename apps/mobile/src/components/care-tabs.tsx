@@ -12,11 +12,11 @@ export default function AppTabs() {
     const { fontScale, width } = useWindowDimensions();
     const icon = (name: CareIconName) => ({ color }: {
         color: ColorValue;
-    }) => <CareIcon name={name} color={color} size={23}/>;
+    }) => <CareIcon name={name} color={color} size={21}/>;
     const label = (text: string) => ({ color }: {
         color: ColorValue;
     }) => <Text maxFontSizeMultiplier={1.25} style={{ fontSize: 12, lineHeight: 18, textAlign: 'center', color }}>{text}</Text>;
-    return <Tabs backBehavior="history" screenOptions={{ headerShown: false, tabBarActiveTintColor: brand.primary, tabBarInactiveTintColor: brand.muted, tabBarHideOnKeyboard: true, tabBarLabelStyle: { fontSize: 12, lineHeight: 18 }, tabBarStyle: { height: 64 + Math.max(insets.bottom, space.sm) + Math.max(0, fontScale - 1) * 36, paddingTop: space.sm, paddingBottom: Math.max(insets.bottom, space.sm), backgroundColor: brand.white, borderTopColor: brand.border }, tabBarItemStyle: { minHeight: 48 }, tabBarAllowFontScaling: true }}>
+    return <Tabs backBehavior="history" screenOptions={{ headerShown: false, tabBarActiveTintColor: brand.primary, tabBarInactiveTintColor: brand.muted, tabBarHideOnKeyboard: true, tabBarLabelStyle: { fontSize: 12, lineHeight: 18 }, tabBarStyle: { height: 56 + Math.max(insets.bottom, space.sm) + Math.max(0, Math.min(fontScale, 1.25) - 1) * 36, paddingTop: space.xs, paddingBottom: Math.max(insets.bottom, space.sm), backgroundColor: brand.white, borderTopColor: brand.border }, tabBarItemStyle: { minHeight: 48 }, tabBarAllowFontScaling: true }}>
     <Tabs.Screen name="dashboard" options={{ title: 'Home', tabBarLabel: label('Home'), tabBarIcon: icon('home') }}/>
     <Tabs.Protected guard={patient}>
       <Tabs.Screen name="records" options={{ title: 'Records', tabBarLabel: label('Records'), tabBarIcon: icon('records') }}/>

@@ -69,14 +69,31 @@ are remounted when the authenticated identity changes.
 
 ## Shared design and accessibility
 
-`constants/brand.ts` now defines the 4-point spacing scale (4, 8, 12, 16, 24, 32,
-40, 48), semantic colors, radii, and typography. Screens use 24px horizontal
-padding, consistent 24px section gaps, a maximum 520px content width, and a
-well-supported native/system font. Heading sizes are 26/30px, section headings
-20px, card titles 17px, body 16px, secondary text 14px, captions 12px.
+`constants/brand.ts` now defines the phone spacing scale (4, 8, 12, 16, 20, 24,
+32), semantic colors, radii, and typography. After the user's iPhone feedback,
+the shared sizing was compacted throughout: 20px horizontal screen padding,
+16px screen-content gaps, 16px card padding, 12px card gaps, and a maximum 480px
+content width. Hero headings are 26px, screen headings 22px, navigation and
+section headings 18px, card titles 16px, body 15px, secondary text 13px, captions
+12px, and button text 15px. Line heights and weights were reduced with the sizes.
+
+Primary buttons remain a minimum 52px and inputs 50px; those were not the main
+cause of the excessive density. Decorative icon circles shrink from 48px to
+36px, standard icons to 20–21px, and the welcome illustration from 208px to
+168px. Actual icon-button touch targets remain 44–48px. Header vertical padding
+is 4px. No PixelRatio scaling or whole-screen scaling transform was introduced.
+
+Account selection now uses the requested heading “How will you use GYNECAIRE?”,
+short explanations, smaller selection icons, and the checked/bordered state.
+Continue lives in a shared safe-area-aware footer; content can scroll separately
+on short screens or at large text sizes. Cards remain content-driven without fixed
+heights. Tall stacks of full-width record/appointment filters became compact
+wrapping segments; interests use wrapping checkbox chips, and education cards
+combine the resource link and bookmark controls. Repeated copy was shortened.
 
 `components/care-ui.tsx` provides Screen, Heading, Button, TextAction, Field,
-Notice, Loading, EmptyState, SelectionCard, Checkbox, Progress, Brand, and CareArt.
+Notice, Loading, EmptyState, SelectionCard, Checkbox, ChoiceChip, Segments,
+Progress, Brand, and CareArt.
 Other reusable components are CareIcon, AppTabs, ResourceCard, AppointmentCard,
 ClinicInfo, and AccountFeedback. Existing themed components now share the brand
 direction rather than requiring duplicated screen-specific fixes.
@@ -164,7 +181,19 @@ existing ten onboarding tests and seven staff-portal validation tests, a full
 supplemental TypeScript/React Hooks lint pass, and mobile-web export. The normal
 iOS/Android export reached native module transformation but could not run the
 Hermes bytecode compiler because Windows rejected its subprocess (`spawn EPERM`).
-Exports are bundle checks, not device tests.
+The JavaScript-only fallback (`--no-bytecode`) successfully exported iOS,
+Android, and web together after the compact sizing changes. This is a debug
+validation artifact, not the recommended release output; Hermes still needs to
+be checked in an unrestricted build environment. Exports are bundle checks,
+not device tests.
+
+The sizing correction specifically changes `constants/brand.ts`, `care-ui`,
+`care-icon`, `care-tabs`, `resource-card`, `themed-text`, `ui/collapsible`,
+`account-type`, `interests`, `register`, `verification`, and the dashboard,
+appointments, and records tab screens. The shared safe-area container already
+positions the custom header, so a second keyboard inset offset was removed.
+No authentication, authorization, or database change was needed for the sizing
+correction.
 
 `npm run lint --workspace=apps/mobile` cannot complete its normal Expo setup:
 mobile has no installed ESLint configuration and automatic dependency lookup is
@@ -188,12 +217,32 @@ From `apps/mobile`:
 ```powershell
 npx expo export --platform web --output-dir dist-onboarding
 npx expo export --platform ios --platform android --output-dir dist-native-refinement
+# Additional JavaScript-only validation when Hermes subprocesses are blocked:
+npx expo export --platform all --no-bytecode --output-dir dist
 ```
 
 The browser access host was unavailable during visual-QA discovery. No browser
 screenshots, iOS simulator tests, Android emulator tests, real device tests, or
 live registration/verification/appointment workflows were performed. Configured
 icons/splash require a new native build to appear on an installed app.
+
+## Floating blue gear investigation
+
+No application component mounts a blue floating gear. The only `gearshape` entry
+in mobile source is an unused standard-icon mapping; account settings remain
+accessible through Profile → Settings, privacy, and help. The described overlay
+matches Expo SDK 58's development **Tools** button, which opens the developer
+menu. This identification is based on source inspection and the SDK documentation,
+not a newly captured screenshot of the user's phone.
+
+Expo documents the launcher-only `__expo_disable_fab=1` option and
+`EXPO_NO_DEV_MENU=1` for clean development previews. No application setting or
+developer-menu behavior was changed here. Expo Go/development clients can show
+their own controls; a standalone production build does not include that
+development launcher overlay.
+
+Sources: [SDK 58 launch URL controls](https://expo.dev/changelog/sdk-58#launch-urls-for-development-builds-and-expo-go)
+and [development versus production](https://docs.expo.dev/workflow/development-mode/).
 
 Manual staging checks before release:
 

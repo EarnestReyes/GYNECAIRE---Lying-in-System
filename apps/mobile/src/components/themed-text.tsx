@@ -17,19 +17,14 @@ export function ThemedText({ style, type = 'default', themeColor, ...rest }: The
 
 const styles = StyleSheet.create({
   small: {
-    fontSize: 14,
-    lineHeight: 20,
-    fontWeight: 500,
+    ...typography.secondary,
   },
   smallBold: {
-    fontSize: 14,
-    lineHeight: 20,
+    ...typography.secondary,
     fontWeight: 700,
   },
   default: {
-    fontSize: 16,
-    lineHeight: 24,
-    fontWeight: 500,
+    ...typography.body,
   },
   title: {
     ...typography.hero,
@@ -38,12 +33,10 @@ const styles = StyleSheet.create({
     ...typography.section,
   },
   link: {
-    lineHeight: 30,
-    fontSize: 14,
+    ...typography.secondary,
   },
   linkPrimary: {
-    lineHeight: 30,
-    fontSize: 14,
+    ...typography.secondary,
     color: brand.primary,
   },
   code: {

@@ -19,7 +19,7 @@ export default function Dashboard() {
     const recommended = [...resources].sort((a, b) => Number(b.categories.some(tag => account?.interests.includes(tag))) - Number(a.categories.some(tag => account?.interests.includes(tag))));
     function explore() { router.push({ pathname: '/learn', params: { q: search } }); }
     return <Screen title="GYNECAIRE" tabbed>
-    <Heading title={account ? `Hello, ${account.full_name.split(' ')[0]}` : 'Welcome to your care space'} description={patient ? 'Your clinic connection, in one reassuring place.' : 'Trusted health information and a little guidance for every chapter.'}/>
+    <Heading title={account ? `Hello, ${account.full_name.split(' ')[0]}` : 'Welcome to your care space'} description={patient ? 'Your clinic connection, in one reassuring place.' : 'Trusted information for every chapter.'}/>
     <AccountFeedback />
     {patient ? <PatientOverview /> : <View style={[ui.card, { backgroundColor: brand.blush }]}>
         <Text accessibilityRole="header" style={ui.sectionTitle}>Your guide to every stage</Text>
@@ -35,7 +35,7 @@ export default function Dashboard() {
     <Button title="Search resources" secondary icon="search" onPress={explore}/>
     <View style={ui.card}>
     <Text accessibilityRole="header" style={ui.sectionTitle}>Browse by category</Text>{categories.map(category => <TextAction key={category} title={category} onPress={() => router.push({ pathname: '/learn', params: { category } })}/>)}</View>
-    <Heading title={account?.interests.length ? 'Based on your interests' : 'A good place to begin'} description="Resources open on the World Health Organization website."/>{recommended.slice(0, 2).map(resource => <ResourceCard key={resource.id} resource={resource}/>)}
+    <Heading level="section" title={account?.interests.length ? 'Based on your interests' : 'A good place to begin'} description="Resources open on the World Health Organization website."/>{recommended.slice(0, 2).map(resource => <ResourceCard key={resource.id} resource={resource}/>)}
     {!patient && <View style={ui.card}>
         <Text style={ui.cardTitle}>Ready to connect with GYNECAIRE?</Text>
         <Text style={ui.small}>Find clinic information or start a request to become a clinic patient.</Text>

@@ -62,6 +62,6 @@ const styles = StyleSheet.create({
     marginTop: Spacing.three,
     borderRadius: Spacing.three,
     marginLeft: Spacing.four,
-    padding: Spacing.four,
+    padding: Spacing.three,
   },
 });

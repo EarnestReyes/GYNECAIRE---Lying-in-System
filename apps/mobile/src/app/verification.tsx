@@ -55,14 +55,14 @@ export default function Verification() {
         </Screen>;
     return <Screen title="Become a clinic patient">
     <Progress step={1} total={2} label="Clinic patient request"/>
-    <Heading title="Let’s connect you with the clinic" description="Share a few details so the clinic can check your identity and contact you. All fields marked * are required."/>
+    <Heading title="Let’s connect you with the clinic" description="Share your birth date and contact number for clinic review. * Required fields."/>
     <View style={{ gap: space.md }}>
     <SelectionCard title="I’m a new patient" icon="profile" selected={!existing} onPress={() => setExisting(false)}/>
     <SelectionCard title="I’m an existing patient" icon="records" selected={existing} onPress={() => setExisting(true)}/>
     </View>
     <Field label="Date of birth" required value={draft.dateOfBirth} onChangeText={dateOfBirth => setDraft(value => ({ ...value, dateOfBirth }))} error={errors.dob} hint="Year-month-day, for example 1995-06-15." placeholder="YYYY-MM-DD" keyboardType="numbers-and-punctuation" maxLength={10} editable={!busy}/>
     <Field label="Contact number" required value={draft.phone} onChangeText={phone => setDraft(value => ({ ...value, phone }))} error={errors.phone} keyboardType="phone-pad" autoComplete="tel" maxLength={25} editable={!busy}/>
-    <Notice>Only authorized clinic staff will review these details. Your medical records stay private until your identity is checked and your request is approved.</Notice>
-    <Checkbox title="I agree that the clinic may use these details to verify my identity and contact me about this request." checked={consent} onPress={() => setConsent(!consent)} error={errors.consent}/>{message && <Notice tone="error">{message}</Notice>}<Button title="Submit clinic request" busy={busy} onPress={submit}/>
+    <Notice>Authorized clinic staff review these details. Medical records stay private until your identity is verified.</Notice>
+    <Checkbox title="I agree to the clinic using these details to check my identity and contact me about this request." checked={consent} onPress={() => setConsent(!consent)} error={errors.consent}/>{message && <Notice tone="error">{message}</Notice>}<Button title="Submit clinic request" busy={busy} onPress={submit}/>
     </Screen>;
 }

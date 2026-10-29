@@ -23,7 +23,7 @@ const names = {
     mail: { ios: 'envelope', android: 'mail', web: 'mail' },
 } as const;
 export type CareIconName = keyof typeof names;
-export function CareIcon({ name, color = brand.primary, size = 24 }: {
+export function CareIcon({ name, color = brand.primary, size = 20 }: {
     name: CareIconName;
     color?: ColorValue;
     size?: number;

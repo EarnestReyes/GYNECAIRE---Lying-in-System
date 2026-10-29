@@ -57,14 +57,14 @@ export default function Register() {
         </Screen>;
     return <Screen title="Create your account">
     <Progress step={clinic ? 3 : 2} total={clinic ? 3 : 2} label="Create your account"/>
-    <Heading title="A caring connection starts here" description="Create one account for health resources and your clinic journey. Fields marked * are required."/>
+    <Heading title="A caring connection starts here" description="One account for health resources and clinic care. * Required fields."/>
     <Field label="Full name" required value={draft.name} onChangeText={name => setDraft(value => ({ ...value, name }))} error={errors.name} autoComplete="name" maxLength={150} editable={!busy}/>
     <Field label="Email address" required value={draft.email} onChangeText={email => setDraft(value => ({ ...value, email }))} error={errors.email} autoCapitalize="none" keyboardType="email-address" autoComplete="email" maxLength={254} editable={!busy}/>
     <Field label="Password" required value={password} onChangeText={setPassword} error={errors.password} hint="Use at least 10 characters." secureTextEntry autoComplete="new-password" editable={!busy}/>
     <Field label="Confirm password" required value={confirm} onChangeText={setConfirm} error={errors.confirm} secureTextEntry autoComplete="new-password" editable={!busy}/>
     <View style={[ui.card, { gap: space.sm }]}>
     <Text style={ui.cardTitle}>Your privacy matters</Text>
-    <Text style={ui.small}>We use your account details to provide access and contact you about your requests. Clinic intake details are shared with authorized staff for identity verification. Medical records need separate clinic approval.</Text>
+    <Text style={ui.small}>We use your account details to provide access and contact you. Authorized staff review clinic intake details. Medical records need clinic approval.</Text>
     </View>
     <Checkbox title="I have read and agree to this privacy notice." checked={consent} onPress={() => setConsent(!consent)} error={errors.consent}/>{message && <Notice tone="error">{message}</Notice>}<Button title="Create account" busy={busy} onPress={submit}/>
     <TextAction title="Already registered? Sign in" onPress={() => router.replace('/login')}/>
