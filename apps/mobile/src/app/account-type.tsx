@@ -1,4 +1,15 @@
 import { router } from 'expo-router';
-import { Text, View } from 'react-native';
-import { Button, Screen, ui } from '@/components/care-ui';
-export default function AccountType() { return <Screen><Text style={ui.caption}>LET’S GET TO KNOW YOU · 1 OF 3</Text><Text style={ui.title}>How can we care for you?</Text><View style={ui.card}><Text style={ui.title}>Clinic Patient</Text><Text style={ui.text}>Receiving or planning care at GYNECAIRE? Request secure clinic verification.</Text><Button title="Choose Clinic Patient" onPress={() => router.push('/patient-type')} /></View><View style={ui.card}><Text style={ui.title}>General User</Text><Text style={ui.text}>Explore women’s health education. Request patient verification later whenever you need care.</Text><Button title="Choose General User" secondary onPress={() => router.push('/register?intent=general')} /></View></Screen>; }
+import { Heading, Notice, Progress, Screen, SelectionCard, Button } from '@/components/care-ui';
+import { useOnboardingDraft } from '@/lib/onboarding-draft';
+export default function AccountType() {
+    const { draft, setDraft } = useOnboardingDraft();
+    const clinic = draft.intent !== 'general';
+    return <Screen title="Choose your account">
+    <Progress step={1} total={clinic ? 3 : 2} label="Create your account"/>
+    <Heading title="How would you like to use GYNECAIRE?" description="Choose the option that feels right for you. You can request clinic care later."/>
+    <SelectionCard title="Clinic patient" description="Choose this if you receive care at GYNECAIRE or want to register as a clinic patient." icon="clinic" selected={clinic} onPress={() => setDraft(value => ({ ...value, intent: 'clinic' }))}/>
+    <SelectionCard title="General user" description="Explore women’s health resources and clinic information, with no patient registration required." icon="learn" selected={!clinic} onPress={() => setDraft(value => ({ ...value, intent: 'general' }))}/>
+    <Notice>Choosing Clinic patient starts a request. The clinic must verify your identity before you can see medical records.</Notice>
+    <Button title="Continue" onPress={() => router.push(clinic ? '/patient-type' : '/register')}/>
+    </Screen>;
+}

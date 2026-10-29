@@ -1,13 +1,47 @@
 import { useState } from 'react';
-import { Redirect, router } from 'expo-router';
-import { Text } from 'react-native';
-import { Button, Notice, Screen, ui } from '@/components/care-ui';
-import { useSession } from '@/lib/session';
+import { router, useLocalSearchParams } from 'expo-router';
+import { View } from 'react-native';
+import { Button, Checkbox, Heading, Loading, Notice, Progress, Screen, TextAction, ui } from '@/components/care-ui';
+import { useAccount } from '@/lib/account-context';
 import { interests, request } from '@/lib/account';
+import { useSubmission } from '@/hooks/use-submission';
 export default function Interests() {
- const { session, loading } = useSession(); const [selected, setSelected] = useState<string[]>([]); const [busy, setBusy] = useState(false); const [message, setMessage] = useState('');
- if (loading) return <Screen><Notice>Loading your account…</Notice></Screen>;
- if (!session) return <Redirect href="/login" />;
- async function save() { setBusy(true); try { await request('/preferences', { interests: selected }); router.replace('/home'); } catch (error) { setMessage(error instanceof Error ? error.message : 'Unable to save.'); } finally { setBusy(false); } }
- return <Screen><Text style={ui.title}>Make this space yours</Text><Text style={ui.text}>Choose what you’d like to learn about. Interests are optional and are never treated as medical conditions.</Text>{interests.map(topic => <Button key={topic} title={`${selected.includes(topic) ? '✓ ' : ''}${topic}`} secondary={!selected.includes(topic)} onPress={() => setSelected(selected.includes(topic) ? selected.filter(item => item !== topic) : [...selected, topic])} />)}{message && <Notice>{message}</Notice>}<Button title="Save and Continue" busy={busy} onPress={save} /><Button title="Skip for Now" secondary onPress={() => router.replace('/home')} /></Screen>;
+    const { account, loading, error, refresh } = useAccount();
+    if (loading)
+        return <Screen title="Your interests">
+        <Loading label="Loading your saved interests…"/>
+        </Screen>;
+    if (error || !account)
+        return <Screen title="Your interests">
+        <Notice tone="error">{error || 'We couldn’t find your account.'}</Notice>
+        <Button title="Try again" onPress={refresh}/>
+        </Screen>;
+    return <InterestSelection current={account.interests}/>;
+}
+function InterestSelection({ current }: {
+    current: string[];
+}) {
+    const { next, editing } = useLocalSearchParams<{
+        next?: string;
+        editing?: string;
+    }>();
+    const { refresh } = useAccount();
+    const [selected, setSelected] = useState(current);
+    const [message, setMessage] = useState('');
+    const { busy, run } = useSubmission();
+    function finish() { router.replace(editing === '1' ? '/profile' : next === 'verification' ? '/onboarding-complete?next=verification' : '/onboarding-complete'); }
+    function save() { void run(async () => { setMessage(''); try {
+        await request('/preferences', { interests: selected });
+        refresh();
+        finish();
+    }
+    catch (error) {
+        setMessage(error instanceof Error ? error.message : 'We couldn’t save your interests. Please try again.');
+    } }); }
+    return <Screen title="Your interests">
+    <Progress step={1} total={1} label="Optional personalization"/>
+    <Heading title="Make this space yours" description="Choose what you’d like to learn about. You can change these later. Selecting a topic doesn’t mean you have a medical condition."/>
+    <View style={ui.card}>{interests.map(topic => <Checkbox key={topic} title={topic} checked={selected.includes(topic)} onPress={() => setSelected(values => values.includes(topic) ? values.filter(value => value !== topic) : [...values, topic])}/>)}</View>{message && <Notice tone="error">{message}</Notice>}<Button title={editing === '1' ? 'Save interests' : 'Save and continue'} busy={busy} onPress={save}/>
+    <TextAction title={editing === '1' ? 'Cancel changes' : 'Skip for now'} onPress={finish}/>
+    </Screen>;
 }

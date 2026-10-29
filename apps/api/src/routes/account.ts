@@ -4,6 +4,20 @@ import { pool } from '../config/database.js';
 import { authenticate, type AuthenticatedRequest } from '../middleware/authenticate.js';
 const router = Router();
 router.use(authenticate);
+router.use((_req, res, next) => { res.set('Cache-Control', 'no-store'); next(); });
+router.get('/care', async (req: AuthenticatedRequest, res) => {
+ try {
+  // Both clinic approval and linkage are required. Caller-supplied IDs are never used.
+  const patient = await pool.query(`SELECT pt.id,pt.patient_number FROM public.patients pt
+   JOIN public.profiles p ON p.id=pt.profile_id WHERE p.id=$1 AND p.account_type='patient'`, [req.authUserId]);
+  if (!patient.rowCount) { res.status(403).json({ error: 'Verified linked patient account required' }); return; }
+  const appointments = await pool.query(`SELECT id,appointment_date,appointment_type,status FROM public.appointments WHERE patient_id=$1
+   ORDER BY (appointment_date >= now() AND status IN ('pending','confirmed')) DESC,
+   CASE WHEN appointment_date >= now() AND status IN ('pending','confirmed') THEN appointment_date END ASC,
+   appointment_date DESC LIMIT 100`, [patient.rows[0].id]);
+  res.json({ patient_number: patient.rows[0].patient_number, appointments: appointments.rows });
+ } catch { res.status(500).json({ error: 'Unable to load care information' }); }
+});
 router.get('/', async (req: AuthenticatedRequest, res) => {
  try {
   const result = await pool.query(`SELECT p.full_name, p.account_type, COALESCE(a.interests, '{}') AS interests,

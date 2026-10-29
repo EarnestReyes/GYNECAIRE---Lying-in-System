@@ -5,3 +5,8 @@ declare module "*.module.css" {
 }
 
 declare module "*.css";
+
+declare module "*.png" {
+  const source: import('react-native').ImageSourcePropType;
+  export default source;
+}

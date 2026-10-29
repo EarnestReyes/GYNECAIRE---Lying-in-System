@@ -7,6 +7,7 @@ node_modules/
 .expo/
 dist/
 dist-onboarding/
+dist-native-refinement/
 web-build/
 expo-env.d.ts
 
@@ -42,3 +43,5 @@ example
 # generated native folders
 /ios
 /android
+
+.test-output/

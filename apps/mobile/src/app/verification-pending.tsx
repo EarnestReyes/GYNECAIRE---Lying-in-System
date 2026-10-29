@@ -1,14 +1,38 @@
-import { useCallback, useState } from 'react';
-import { Redirect, router, useFocusEffect } from 'expo-router';
+import { useCallback } from 'react';
+import { router, useFocusEffect } from 'expo-router';
 import { Text, View } from 'react-native';
-import { Button, Notice, Screen, ui } from '@/components/care-ui';
-import { request, type Account } from '@/lib/account';
-import { useSession } from '@/lib/session';
-export default function Pending() {
- const { session, loading } = useSession(); const [account, setAccount] = useState<Account | null>(null); const [message, setMessage] = useState('');
- const refresh = useCallback(() => { let active = true; if (session) request<Account>('').then(data => { if (active) { setAccount(data); setMessage(''); } }).catch(error => { if (active) setMessage(error instanceof Error ? error.message : 'Unable to load status.'); }); return () => { active = false; }; }, [session]);
- useFocusEffect(refresh);
- if (!loading && !session) return <Redirect href="/login" />;
- const status = account?.verification_status;
- return <Screen><Text style={ui.title}>{status === 'approved' ? 'Verification Approved' : status === 'rejected' ? 'Review Completed' : status === 'pending' ? 'Account Under Verification' : 'Verification Status'}</Text>{message ? <Notice>{message}</Notice> : !account ? <Notice>Loading your submission…</Notice> : <View style={ui.card}><Text style={ui.label}>Submission: {status ? 'Received' : 'Not submitted'}</Text><Text style={ui.text}>Clinic review: {status ?? 'Not started'}</Text><Text style={ui.text}>{status === 'pending' ? 'The clinic will contact you using your submitted contact details. Clinical records remain protected while review is pending.' : status === 'approved' ? 'Your patient account is now verified.' : status === 'rejected' ? 'Please contact the clinic to clarify your details before submitting again.' : 'Start a verification request from Home.'}</Text></View>}<Button title="Refresh Status" secondary onPress={() => { refresh(); }} /><Button title="Back to Home" onPress={() => router.replace('/home')} /></Screen>;
+import { Button, EmptyState, Heading, Loading, Notice, Progress, Screen, ui } from '@/components/care-ui';
+import { CareIcon } from '@/components/care-icon';
+import { useAccount } from '@/lib/account-context';
+import { space } from '@/constants/brand';
+export default function VerificationStatus() {
+    const { account, loading, error, refresh } = useAccount();
+    useFocusEffect(useCallback(() => { refresh(); }, [refresh]));
+    const status = account?.verification_status;
+    return <Screen title="My clinic request">{loading ? <Loading label="Checking your clinic request…"/> : error ? <>
+        <Notice tone="error">{error}</Notice>
+        <Button title="Check again" onPress={refresh}/>
+        </> : status === 'pending' ? <>
+        <Progress step={2} total={2} label="Clinic patient request"/>
+        <EmptyState title="Your request is with the clinic" description="You’ve completed your part. Clinic staff will check your identity before approving your patient account." icon="clock"/>
+        <View style={ui.card}>{['Request received', 'Waiting for clinic review', 'Approval and record linking'].map((label, index) => <View key={label} style={ui.row}>
+            <CareIcon name={index === 0 ? 'check' : 'clock'}/>
+            <View style={ui.flex}>
+            <Text style={ui.cardTitle}>{label}</Text>{index === 1 && <Text style={ui.small}>The clinic may contact you using the number you submitted.</Text>}</View>
+            </View>)}</View>
+        <Notice>You can keep exploring health resources while you wait. No review time or automatic notification is promised.</Notice>
+        <Button title="Check for an update" secondary onPress={refresh}/>
+        <Button title="Back to home" onPress={() => router.replace('/dashboard')}/>
+        </> : status === 'approved' ? <>
+        <EmptyState title="You’re a verified clinic patient" description="Your clinic has approved your account. You can now see the patient features available to you." icon="check"/>
+        <Button title="Go to my home" onPress={() => router.replace('/dashboard')}/>
+        </> : status === 'rejected' ? <>
+        <Heading title="The clinic couldn’t approve this request" description="Please contact the clinic to check your details before trying again. Your health information is still protected."/>
+        <Button title="Review my details and try again" onPress={() => router.replace('/verification')}/>
+        <Button title="Back to home" secondary onPress={() => router.replace('/dashboard')}/>
+        </> : <>
+        <EmptyState title="No request submitted yet" description="Start a clinic patient request when you’re ready to receive care." icon="clinic"/>
+        <Button title="Become a clinic patient" onPress={() => router.replace('/verification')}/>
+        <View style={{ height: space.sm }}/>
+        </>}</Screen>;
 }

@@ -1,13 +1,41 @@
 import { useState } from 'react';
-import { Redirect, router } from 'expo-router';
-import { Text } from 'react-native';
-import { Button, Field, Notice, Screen, ui } from '@/components/care-ui';
-import { useSession } from '@/lib/session';
+import { router } from 'expo-router';
+import { Button, EmptyState, Field, Heading, Notice, Screen } from '@/components/care-ui';
 import { supabase } from '@/lib/supabase';
+import { passwordErrors } from '@/lib/form-validation';
+import { useSubmission } from '@/hooks/use-submission';
 export default function ResetPassword() {
- const { session, loading } = useSession(); const [password, setPassword] = useState(''); const [confirm, setConfirm] = useState(''); const [busy, setBusy] = useState(false); const [message, setMessage] = useState('');
- if (loading) return <Screen><Notice>Checking your session…</Notice></Screen>;
- if (!session) return <Redirect href="/recover" />;
- async function save() { if (password.length < 10 || password !== confirm) { setMessage('Use matching passwords of at least 10 characters.'); return; } setBusy(true); try { const { error } = await supabase.auth.updateUser({ password }); if (error) setMessage('Unable to update your password. Request a new recovery link and try again.'); else router.replace('/home'); } catch { setMessage('Unable to connect. Please try again.'); } finally { setBusy(false); } }
- return <Screen><Text style={ui.title}>Choose a new password</Text><Field label="New password" value={password} onChangeText={setPassword} secureTextEntry autoComplete="new-password" /><Field label="Confirm new password" value={confirm} onChangeText={setConfirm} secureTextEntry autoComplete="new-password" />{message && <Notice>{message}</Notice>}<Button title="Update Password" busy={busy} onPress={save} /></Screen>;
+    const [password, setPassword] = useState('');
+    const [confirm, setConfirm] = useState('');
+    const [errors, setErrors] = useState({ password: '', confirm: '' });
+    const [message, setMessage] = useState('');
+    const [saved, setSaved] = useState(false);
+    const { busy, run } = useSubmission();
+    function save() {
+        const next = passwordErrors(password, confirm);
+        setErrors(next);
+        if (Object.values(next).some(Boolean))
+            return;
+        void run(async () => { setMessage(''); try {
+            const { error } = await supabase.auth.updateUser({ password });
+            if (error)
+                setMessage('We couldn’t change your password. Please request a new recovery email and try again.');
+            else {
+                setPassword('');
+                setConfirm('');
+                setSaved(true);
+            }
+        }
+        catch {
+            setMessage('We couldn’t connect. Please try again.');
+        } });
+    }
+    return <Screen title="Change password">{saved ? <>
+        <EmptyState title="Your password is updated" description="Use your new password the next time you sign in." icon="check"/>
+        <Button title="Go to home" onPress={() => router.replace('/dashboard')}/>
+        </> : <>
+        <Heading title="Choose a new password" description="Use a password you haven’t shared with anyone."/>
+        <Field label="New password" required value={password} onChangeText={setPassword} error={errors.password} hint="Use at least 10 characters." secureTextEntry autoComplete="new-password" editable={!busy}/>
+        <Field label="Confirm new password" required value={confirm} onChangeText={setConfirm} error={errors.confirm} secureTextEntry autoComplete="new-password" editable={!busy}/>{message && <Notice tone="error">{message}</Notice>}<Button title="Update password" busy={busy} onPress={save}/>
+        </>}</Screen>;
 }

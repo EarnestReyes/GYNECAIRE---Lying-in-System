@@ -1,2 +1,2 @@
-﻿import { Redirect } from 'expo-router';
-export default function Explore() { return <Redirect href="/home" />; }
+import { Redirect } from 'expo-router';
+export default function Explore() { return <Redirect href="/home"/>; }

@@ -40,7 +40,8 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "test:ui": "tsc --ignoreConfig --module commonjs --target es2022 --types node --esModuleInterop --skipLibCheck --outDir .test-output tests/refinement.test.ts src/lib/form-validation.ts src/lib/navigation.ts src/lib/education.ts src/constants/brand.ts && node --test --test-isolation=none .test-output/tests/refinement.test.js"
   },
   "private": true
 }

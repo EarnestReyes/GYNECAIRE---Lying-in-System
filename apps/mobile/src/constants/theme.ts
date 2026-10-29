@@ -6,14 +6,15 @@
 import '@/global.css';
 
 import { Platform } from 'react-native';
+import { brand } from './brand';
 
 export const Colors = {
   light: {
-    text: '#000000',
-    background: '#ffffff',
-    backgroundElement: '#F0F0F3',
-    backgroundSelected: '#E0E1E6',
-    textSecondary: '#60646C',
+    text: brand.plum,
+    background: brand.background,
+    backgroundElement: brand.white,
+    backgroundSelected: brand.blush,
+    textSecondary: brand.muted,
   },
   dark: {
     text: '#ffffff',
