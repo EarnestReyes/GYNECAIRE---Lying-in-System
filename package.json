@@ -19,5 +19,8 @@
   "private": true,
   "workspaces": [
     "apps/*"
-  ]
+  ],
+  "devDependencies": {
+    "expo-router": "58.0.28"
+  }
 }

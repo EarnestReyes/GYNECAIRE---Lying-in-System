@@ -1,0 +1,4 @@
+import { router } from 'expo-router';
+import { Text, View } from 'react-native';
+import { Button, Screen, ui } from '@/components/care-ui';
+export default function AccountType() { return <Screen><Text style={ui.caption}>LET’S GET TO KNOW YOU · 1 OF 3</Text><Text style={ui.title}>How can we care for you?</Text><View style={ui.card}><Text style={ui.title}>Clinic Patient</Text><Text style={ui.text}>Receiving or planning care at GYNECAIRE? Request secure clinic verification.</Text><Button title="Choose Clinic Patient" onPress={() => router.push('/patient-type')} /></View><View style={ui.card}><Text style={ui.title}>General User</Text><Text style={ui.text}>Explore women’s health education. Request patient verification later whenever you need care.</Text><Button title="Choose General User" secondary onPress={() => router.push('/register?intent=general')} /></View></Screen>; }

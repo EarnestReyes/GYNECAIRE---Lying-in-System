@@ -1,0 +1,14 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { decisionSchema, preferencesSchema, verificationSchema } from './onboarding.js';
+const intake = { patient_kind: 'existing', date_of_birth: '1995-06-15', contact_number: '+639171234567', consent: true };
+test('accepts minimal consented intake without record identifiers', () => assert.equal(verificationSchema.safeParse(intake).success, true));
+test('requires explicit consent', () => assert.equal(verificationSchema.safeParse({ ...intake, consent: false }).success, false));
+test('rejects invalid and future dates', () => { for (const date_of_birth of ['2025-02-30', '2999-01-01', '1899-01-01']) assert.equal(verificationSchema.safeParse({ ...intake, date_of_birth }).success, false); });
+test('rejects self-assigned patient linkage and privileges', () => { for (const field of ['patient_id', 'profile_id', 'account_type', 'status']) assert.equal(verificationSchema.safeParse({ ...intake, [field]: 'patient' }).success, false); });
+test('rejects phone numbers without enough digits', () => assert.equal(verificationSchema.safeParse({ ...intake, contact_number: '-------' }).success, false));
+test('accepts empty optional interests', () => assert.equal(preferencesSchema.safeParse({ interests: [] }).success, true));
+test('rejects unknown and duplicate interests', () => { for (const interests of [['diagnosis'], ['Pregnancy', 'Pregnancy']]) assert.equal(preferencesSchema.safeParse({ interests }).success, false); });
+test('approval requires patient id and identity confirmation', () => { for (const body of [{ status: 'approved' }, { status: 'approved', patient_id: 'ce3f63bf-8be1-439d-85b2-a2485145b457', identity_verified: false }]) assert.equal(decisionSchema.safeParse(body).success, false); });
+test('accepts explicit staff approval', () => assert.equal(decisionSchema.safeParse({ status: 'approved', patient_id: 'ce3f63bf-8be1-439d-85b2-a2485145b457', identity_verified: true }).success, true));
+test('rejection cannot link a patient', () => assert.equal(decisionSchema.safeParse({ status: 'rejected', patient_id: 'ce3f63bf-8be1-439d-85b2-a2485145b457' }).success, false));
