@@ -15,6 +15,7 @@ import { Staff } from './pages/staff';
 import { Settings } from './pages/settings';
 import { Messages } from './pages/messages';
 import './App.css';
+import './theme.css';
 
 export default function App() {
   const [mode, setMode] = useState<'loading' | 'login' | 'portal' | 'recovery'>('loading');
@@ -81,7 +82,7 @@ export default function App() {
     dashboard: <Dashboard user={user} />, patients: <Patients isAdmin={user.staff_role === 'admin'} />, appointments: <Appointments />,
     records: <MedicalRecords />, checkups: <Checkups />, inventory: <Inventory />,
     reports: <Reports />, staff: user.staff_role === 'admin' ? <Staff /> : <Empty title="Administrator access required" icon="lock">Staff management is restricted to clinic administrators.</Empty>,
-    settings: <Settings user={user} />, messages: <Messages />,
+    settings: <Settings user={user} onProfileSaved={name=>setUser(previous=>previous?{...previous,full_name:name}:null)} logout={logout} logoutBusy={busy} />, messages: <Messages />,
   };
   return <Shell user={user} page={page} logout={logout} busy={busy}>{error && <p role="alert" className="notice error">{error}</p>}<div key={page} className="page-content">{pages[page]}</div></Shell>;
 }

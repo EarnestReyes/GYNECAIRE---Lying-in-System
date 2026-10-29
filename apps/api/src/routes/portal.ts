@@ -4,10 +4,12 @@ import { pool } from '../config/database.js';
 import { authenticate, type AuthenticatedRequest } from '../middleware/authenticate.js';
 import { requireStaff } from '../middleware/authorize.js';
 import { appointmentSchema, appointmentUpdateSchema, dateRangeSchema, pageSchema, patientSchema } from '../validation/portal.js';
+import { profileRouter } from './settings-profile.js';
 
 const router = Router();
 router.use((_req, res, next) => { res.set('Cache-Control', 'no-store'); next(); });
 router.use(authenticate, requireStaff('admin', 'midwife', 'nurse', 'receptionist'));
+router.use('/profile', profileRouter(pool));
 
 router.get('/session', async (req: AuthenticatedRequest, res) => {
   try {

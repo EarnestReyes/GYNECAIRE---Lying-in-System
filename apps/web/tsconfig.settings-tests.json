@@ -1,0 +1,4 @@
+{
+ "compilerOptions":{"target":"ES2022","module":"NodeNext","moduleResolution":"NodeNext","types":["node"],"lib":["ES2022","DOM"],"strict":true,"skipLibCheck":true,"rootDir":".","outDir":".test-output/settings"},
+ "include":["tests/settings.test.ts","src/lib/settings-security.ts","src/lib/theme.ts"]
+}
