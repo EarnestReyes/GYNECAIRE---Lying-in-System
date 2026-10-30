@@ -1,11 +1,11 @@
-﻿import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { signOut } from './lib/auth';
 import { lazy, Suspense } from 'react';
 import { supabase } from './lib/supabase';
 import { staffApi, type StaffIdentity } from './lib/portal';
 import { Login } from './components/login';
 import { Shell } from './components/shell';
-import { readPage } from './lib/navigation';
+import { readPage, canAccessPage } from './lib/navigation';
 import { Empty } from './components/ui';
 import { PageBoundary } from './components/page-boundary';
 import { Dashboard } from './pages/dashboard';
@@ -85,7 +85,7 @@ export default function App() {
   if (mode === 'loading') return <main className="boot-screen"><span className="spinner" /><p>Verifying GYNECAIRE staff access…</p></main>;
   if (mode !== 'portal' || !user) return <Login key={mode} recovery={mode === 'recovery'} onAuthenticated={authorize} initialError={error} />;
   const pages = {
-    'patient-imports': user.staff_role==='admin'?<Suspense fallback={<p role="status">Loading import workspace…</p>}><PatientImportPage/></Suspense>:<Empty title="Administrator access required" icon="lock">Historical imports are restricted to administrators.</Empty>,
+    'patient-imports': canAccessPage('patient-imports',user.staff_role)?<Suspense fallback={<p role="status">Loading import workspace…</p>}><PatientImportPage/></Suspense>:<Empty title="Administrator access required" icon="lock">Historical imports are restricted to administrators.</Empty>,
     dashboard: <Dashboard user={user} />, patients: <Patients isAdmin={user.staff_role === 'admin'} />, appointments: <Appointments />,
     records: <MedicalRecords />, checkups: <Checkups />, inventory: <Inventory />,
     reports: <Reports />, staff: user.staff_role === 'admin' ? <Staff /> : <Empty title="Administrator access required" icon="lock">Staff management is restricted to clinic administrators.</Empty>,

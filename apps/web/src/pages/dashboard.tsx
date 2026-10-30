@@ -2,7 +2,7 @@
 import { dateLabel, manilaDate, type Overview, type Report, type StaffIdentity } from '../lib/portal';
 import { Badge, Empty, PageHeading, Panel, ResourceState } from '../components/ui';
 import { Icon, type IconName } from '../components/icon';
-import { navigate } from '../lib/navigation';
+import { navigate,quickActions } from '../lib/navigation';
 import { VisitChart } from './reports';
 
 export function Dashboard({ user }: { user: StaffIdentity }) {
@@ -32,7 +32,7 @@ export function Dashboard({ user }: { user: StaffIdentity }) {
         <p className="panel-note">Monthly completed visits from January 1 to today. Based on recorded appointments.</p>
       </Panel>
       <Panel title="Quick actions">
-        <div className="quick-actions">{([['patients','Add or find a patient','patients'],['appointments','Schedule an appointment','appointments'],['checkups','Completed consultation history','checkups'],['reports','View clinic reports','reports']] as const).map(([page,label,icon]) => <button key={page} onClick={() => navigate(page)}><span className="quick-icon"><Icon name={icon} /></span>{label}<Icon name="arrow" size={16} /></button>)}</div>
+        <div className="quick-actions">{quickActions.map(([page,label,icon]) => <button key={page} onClick={() => navigate(page)}><span className="quick-icon"><Icon name={icon} /></span><span>{label}</span><Icon name="arrow" size={16} /></button>)}</div>
         <div className="overview-numbers"><div><span>Verification pending</span><strong>{data?.pending_requests ?? '—'}</strong></div><div><span>Appointments pending</span><strong>{data?.pending_appointments ?? '—'}</strong></div></div>
       </Panel>
       <Panel title="Recent activity">

@@ -11,6 +11,7 @@ import verificationReviewRoutes from "./routes/verification-review.js";
 import portalRoutes from "./routes/portal.js";
 import { createImportRouter, purgeExpiredImports } from './imports/router.js';
 import { pool } from './config/database.js';
+import { purgeAvatarObjects } from './routes/profile-avatar.js';
 
 const app = express();
 const PORT = Number(process.env.PORT) || 5000;
@@ -54,6 +55,10 @@ if (process.env.IMPORTS_ENABLED === 'true' || process.env.IMPORT_RETENTION_ENABL
 }
 
 // Start API server
+if(process.env.AVATARS_ENABLED==='true'){
+ const cleanup=()=>{void purgeAvatarObjects(pool).catch(()=>console.warn('Avatar cleanup unavailable; check storage and migration.'));};
+ cleanup();setInterval(cleanup,15*60*1000).unref();
+}
 app.listen(PORT, () => {
   console.log(`GYNECAIRE API running on http://localhost:${PORT}`);
 });

@@ -8,9 +8,10 @@ export const navigation = [
   ['staff', 'Staff Management', 'staff'], ['settings', 'Settings', 'settings'],
 ] as const satisfies readonly (readonly [string, string, IconName])[];
 export type Page = typeof navigation[number][0] | 'patient-imports';
+export const quickActions=[['patients','Add or find a patient','patients'],['appointments','Schedule an appointment','appointments'],['checkups','Completed consultation history','checkups'],['reports','View clinic reports','reports']] as const satisfies readonly (readonly [Page,string,IconName])[];
 export function pageFromHash(hash:string): Page {
-  const value = hash.replace(/^#/,'').split('?')[0];
-  if(value==='patients/import')return 'patient-imports';
+  const value = hash.replace(/^#\/?/,'').split('?')[0].replace(/\/$/,'');
+  if(value==='patients/import'||value==='patient-imports')return 'patient-imports';
   return navigation.find(item => item[0] === value)?.[0] ?? 'dashboard';
 }
 export function patientFromHash(hash:string):string|null{
@@ -19,5 +20,7 @@ export function patientFromHash(hash:string):string|null{
  return id&&/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(id)?id:null;
 }
 export function readPage():Page{return pageFromHash(window.location.hash);}
-export function navigate(page: Page) { window.location.hash = page==='patient-imports'?'patients/import':page; }
+export function pageHash(page:Page){return '#'+(page==='patient-imports'?'patients/import':page);}
+export function canAccessPage(page:Page,role:string){return !['patient-imports','staff'].includes(page)||role==='admin';}
+export function navigate(page: Page) { window.location.hash = pageHash(page); }
 export function openPatient(id:string){window.location.hash='patients?patient='+encodeURIComponent(id);}

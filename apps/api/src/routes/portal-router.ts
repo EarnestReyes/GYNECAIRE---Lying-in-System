@@ -5,11 +5,13 @@ import type { AuthenticatedRequest } from '../middleware/authenticate.js';
 import { appointmentSchema, appointmentUpdateSchema, dateRangeSchema, pageSchema, patientSchema } from '../validation/portal.js';
 import { profileRouter } from './settings-profile.js';
 import { staffAccessRouter } from './staff-access.js';
+import { avatarRouter } from './profile-avatar.js';
 
 export function createPortalRouter(pool:Pool,staffGuards:RequestHandler[],adminGuard:RequestHandler){
 const router = Router();
 router.use((_req, res, next) => { res.set('Cache-Control', 'no-store'); next(); });
 router.use(...staffGuards);
+router.use('/profile/avatar', avatarRouter(pool));
 router.use('/profile', profileRouter(pool));
 router.use('/members',adminGuard,staffAccessRouter(pool));
 

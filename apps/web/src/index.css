@@ -1,5 +1,5 @@
 @import "./design-tokens.css";
-﻿:root {
+:root {
   font-family: 'Segoe UI', Inter, -apple-system, BlinkMacSystemFont, sans-serif;
   color: var(--text);
   background: var(--background);
@@ -18,19 +18,19 @@ button, a { touch-action: manipulation; }
 button { cursor: pointer; }
 button:disabled { cursor: not-allowed; opacity: .55; }
 a { color: var(--primary); }
-button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid #b95d8c; outline-offset: 3px; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid var(--primary); outline-offset: 3px; }
 h1, h2, h3, p { margin: 0; }
-h1 { font-size: 27px; line-height: 1.3; letter-spacing: -.7px; color: #262037; font-weight: 650; }
+h1 { font-size: 27px; line-height: 1.3; letter-spacing: -.7px; color: var(--text); font-weight: 650; }
 h2 { font-size: 16px; line-height: 1.4; font-weight: 650; }
 h3 { font-size: 15px; font-weight: 600; }
 small { font-size: 12px; }
 svg { flex-shrink: 0; vertical-align: middle; }
-input, select, textarea { border: 1px solid #e4dce7; border-radius: 7px; background: var(--surface-subtle); color: var(--text); padding: 10px 12px; min-width: 0; width: 100%; }
-input::placeholder, textarea::placeholder { color: #8b8190; font-size: 12px; }
-input:disabled, textarea:disabled, select:disabled { background: #faf7fa; color: var(--muted); }
+input, select, textarea { border: 1px solid var(--border); border-radius: 7px; background: var(--surface-subtle); color: var(--text); padding: 10px 12px; min-width: 0; width: 100%; }
+input::placeholder, textarea::placeholder { color: var(--muted); font-size: 12px; }
+input:disabled, textarea:disabled, select:disabled { background: var(--surface-subtle); color: var(--muted); }
 label { display: grid; gap: 7px; font-size: 12px; font-weight: 600; }
 fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
 textarea { resize: vertical; }
-::selection { background: #f2d4e2; color: var(--plum); }
+::selection { background: var(--selected-bg); color: var(--plum); }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }

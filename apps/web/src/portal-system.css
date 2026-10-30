@@ -1,5 +1,38 @@
 /* Shared sizing and states used by every portal page. No page-level zoom/scaling. */
 body { color:var(--text); background:var(--background); font-size:var(--font-body); }
+.sidebar { background:var(--sidebar-bg); }
+.quick-actions { display:grid; gap:8px; padding:0 var(--card-padding) var(--space-5); }
+.quick-actions button { display:flex; gap:14px; min-height:60px; padding:12px 14px; border:1px solid var(--border); border-radius:var(--radius-control); background:var(--surface-subtle); color:var(--text); font-weight:600; }
+.quick-actions button:last-child { border-bottom:1px solid var(--border); }
+.quick-actions button:hover { background:var(--hover-bg); border-color:var(--primary); }
+.quick-actions button > svg { margin-left:auto; flex-shrink:0; color:var(--muted); }
+.quick-actions .quick-icon { width:36px; height:36px; flex-shrink:0; background:var(--blush); color:var(--primary); }
+:is(button,a,input,select,textarea):focus-visible { outline:2px solid var(--primary); outline-offset:3px; box-shadow:var(--focus); }
+.avatar { overflow:hidden; background:var(--blush); color:var(--primary); border-color:var(--surface); outline-color:var(--border); }
+.avatar img { width:100%; height:100%; object-fit:cover; }
+.avatar-edit { background:transparent; border:0; padding:4px; border-radius:50%; }
+.profile-photo { display:grid; justify-items:center; max-width:220px; gap:6px; }
+.profile-photo small { color:var(--muted); font-size:var(--font-caption); }
+.photo-controls { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; }
+.photo-preview { width:min(100%,300px); aspect-ratio:1; object-fit:cover; align-self:center; border-radius:var(--radius-card); }
+.portal :is(.profile-summary,.selected-patient,.patient-options button,.subpanel,.checkup-patient,.step-list,.chat-composer,.prompt) { background:var(--surface-subtle); color:var(--text); border-color:var(--border); }
+.portal :is(.patient-options button:hover,tbody tr:hover,.filter-tabs button:hover) { background:var(--hover-bg); }
+.portal :is(.overview-numbers strong,.activity-list strong,.subpanel h3,dd,.checkup-patient strong,.service-chart li,.profile-cautions strong) { color:var(--text); }
+.portal :is(.activity-list small,.patient-number,.profile-summary p,.subpanel p,dt,.selected-patient small,.patient-picker > small,.inline-label,.pagination,.step-list button,.profile-cautions small) { color:var(--muted); }
+.portal :is(.empty-icon,.profile-cautions > div,.filter-tabs button) { background:var(--blush); color:var(--primary); border-color:var(--border); }
+.portal :is(.rose,.lavender,.blue) { background:var(--neutral-bg); color:var(--neutral-text); }
+.portal .peach { background:var(--warning-bg); color:var(--warning-text); }.portal .mint { background:var(--success-bg); color:var(--success-text); }
+.portal :is(input,select,textarea) { background:var(--input-bg); color:var(--text); }
+.portal table { background:var(--table-bg); }.portal :is(.modal,.search-results,.notification-popover) { background:var(--elevated); }
+.portal .button:not(.secondary) { background:var(--button-bg); color:var(--button-text); }
+.portal .button.secondary { background:var(--secondary-bg); color:var(--primary); }
+.portal .filter-tabs button.active { background:var(--selected-bg); color:var(--primary); }
+.portal :is(td,dt,dd,.pagination,.panel-note,.quick-actions button,.profile-tabs) { border-color:var(--border); }
+.portal :is(.sidebar nav a.active,.sidebar nav a.active:hover) { background:var(--button-bg); color:var(--button-text); }
+.portal :is(.sidebar nav a,.user-menu strong,.breadcrumb strong) { color:var(--text); }
+.portal :is(.sidebar nav a:hover,.search-results button:hover) { background:var(--hover-bg); }
+.portal .care-note { background:var(--blush); color:var(--primary); }.portal .care-note strong { color:var(--primary); }
+.portal .overview-numbers { grid-template-columns:repeat(2,minmax(0,1fr)); }
 h1 { font-size:var(--font-page); color:var(--text); }
 h2 { font-size:var(--font-section); } h3 { font-size:var(--font-card); }
 input,select,textarea { min-height:var(--control-height); border-radius:var(--radius-control); background:var(--surface-subtle); color:var(--text); border-color:var(--border); font-size:var(--font-body); }
