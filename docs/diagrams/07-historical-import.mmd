@@ -1,0 +1,24 @@
+flowchart TD
+  S(["Active administrator opens import"])
+  G{"Encryption key, scanner and feature gate ready?"}
+  X(["Uploads disabled until prerequisites pass"]):::conditional
+  I[/"Synthetic CSV/XLSX upload; limits and malware scan"/]
+  P["Isolated parser; validate cells and encrypt staging"]
+  R["Map columns, preview and review duplicate decisions"]
+  D{"All rows resolved and revision current?"}
+  T["Lock job; transactional confirm / safe completed retry"]
+  B[("patients + provenance + events + audit; commit or rollback")]
+  E(["History; no Auth account or automatic patient link"])
+  C["TTL purges encrypted staging; retain approved provenance"]:::conditional
+  S --> G
+  G -->|"No"| X
+  G -->|"Yes"| I
+  I -->|"clean only"| P
+  P --> R
+  R --> D
+  D -->|"No"| R
+  D -->|"Yes"| T
+  T --> B
+  B --> E
+  P -->|"retention schedule"| C
+  classDef conditional stroke-dasharray:6 4,fill:#fff3dc,stroke:#9b681c

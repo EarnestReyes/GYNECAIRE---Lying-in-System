@@ -1,0 +1,17 @@
+flowchart TD
+  M["Patient: Expo 58 / React Native mobile"]
+  W["Active staff: React / Vite web portal"]
+  A["Supabase Auth: sessions, email and JWT"]
+  E["Express 5: verify JWT, active role and ownership"]
+  P[("PostgreSQL: 13 public tables; RLS enabled")]
+  S[("Private staff-avatars: backend-only sign/write/delete")]
+  G["Import scanner and encryption prerequisites"]:::conditional
+  U["Clinical records / stock / messages / notifications: no backend"]:::conditional
+  M -->|"Auth"| A
+  W -->|"Auth"| A
+  M -->|"bearer JWT"| E
+  W -->|"bearer JWT"| E
+  E -->|"parameterized SQL"| P
+  E -->|"server credential"| S
+  E -->|"gated imports"| G
+  classDef conditional stroke-dasharray:6 4,fill:#fff3dc,stroke:#9b681c

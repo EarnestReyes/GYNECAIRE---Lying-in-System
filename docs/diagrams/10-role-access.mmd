@@ -1,0 +1,16 @@
+flowchart TD
+  G["Guest: public education and onboarding"]
+  A["Authenticated general / linked patient"]
+  S["Active staff membership: admin / midwife / nurse / receptionist"]
+  P["Own preferences, verification; linked patient care reads"]
+  W["Staff patients / appointments / verification / reports / own profile"]
+  D{"Database role is admin?"}
+  N(["Nonadmin: deny privileged writes"])
+  Y["Admin: clinic edits / staff access / gated imports"]
+  U["No Doctor role; no clinical-chart, stock, message or notification permissions yet"]:::conditional
+  A --> P
+  S --> W
+  W --> D
+  D -->|"No"| N
+  D -->|"Yes"| Y
+  classDef conditional stroke-dasharray:6 4,fill:#fff3dc,stroke:#9b681c

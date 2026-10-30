@@ -1,0 +1,29 @@
+sequenceDiagram
+  actor Admin
+  participant Web
+  participant API
+  participant DB as PostgreSQL
+  Admin->>Web: Save approved clinic facts
+  Web->>API: PUT /api/v1/staff/clinic-settings + JWT + expected_version
+  API->>API: Verify JWT, active staff and admin guard
+  API->>DB: BEGIN; advisory lock; recheck active admin FOR UPDATE
+  API->>DB: Lock singleton and compare revision
+  alt Invalid role or stale revision
+    API->>DB: ROLLBACK
+    API-->>Web: 403 or 409
+  else Authorized current revision
+    API->>DB: Parameterized upsert + audit
+    API->>DB: COMMIT (rollback on failure)
+    API-->>Web: Updated settings
+  end
+  actor Patient
+  participant Mobile
+  Patient->>Mobile: Open own schedule
+  Mobile->>API: GET /api/v1/account/care + JWT
+  API->>DB: Derive patients.profile_id from authenticated identity
+  alt Linked patient exists
+    API->>DB: Read appointments for derived patient only
+    API-->>Mobile: Own limited care summary
+  else No linked patient
+    API-->>Mobile: No linked care access
+  end

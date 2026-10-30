@@ -2,8 +2,10 @@ import { Router } from 'express';
 import { preferencesSchema, verificationSchema } from '../validation/onboarding.js';
 import { pool } from '../config/database.js';
 import { authenticate, type AuthenticatedRequest } from '../middleware/authenticate.js';
+import { patientClinicRead } from './clinic-settings.js';
 const router = Router();
 router.use(authenticate);
+router.get('/clinic',patientClinicRead(pool));
 router.use((_req, res, next) => { res.set('Cache-Control', 'no-store'); next(); });
 router.get('/care', async (req: AuthenticatedRequest, res) => {
  try {

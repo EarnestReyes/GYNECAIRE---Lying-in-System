@@ -6,11 +6,13 @@ import { appointmentSchema, appointmentUpdateSchema, dateRangeSchema, pageSchema
 import { profileRouter } from './settings-profile.js';
 import { staffAccessRouter } from './staff-access.js';
 import { avatarRouter } from './profile-avatar.js';
+import { clinicSettingsRouter } from './clinic-settings.js';
 
 export function createPortalRouter(pool:Pool,staffGuards:RequestHandler[],adminGuard:RequestHandler){
 const router = Router();
 router.use((_req, res, next) => { res.set('Cache-Control', 'no-store'); next(); });
 router.use(...staffGuards);
+router.use('/clinic-settings',clinicSettingsRouter(pool,adminGuard));
 router.use('/profile/avatar', avatarRouter(pool));
 router.use('/profile', profileRouter(pool));
 router.use('/members',adminGuard,staffAccessRouter(pool));

@@ -17,11 +17,15 @@
     "jsx": "react-jsx"
   },
   "include": [
+    "tests/avatar.test.ts",
+    "src/lib/avatar.ts",
     "tests/settings.test.ts",
     "src/lib/settings-security.ts",
     "src/lib/theme.ts",
     "tests/portal.test.ts",
     "src/lib/navigation.ts",
-    "src/lib/import-wizard.ts"
+    "src/lib/import-wizard.ts",
+    "tests/clinic-settings.test.ts",
+    "src/lib/clinic-settings.ts"
   ]
 }

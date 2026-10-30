@@ -1,0 +1,19 @@
+flowchart TD
+  M["External entity: mobile account / guest"]
+  W["External entity: staff / administrator"]
+  AU["External identity provider: Supabase Auth"]
+  P1(("P1 Account and linked-care authorization"))
+  P2(("P2 Staff workflows and admin controls"))
+  D1[("D1 Public application database")]
+  P3(("P3 Validate / decode / scan files"))
+  D2[("D2 Private avatar objects; encrypted import DB staging")]
+  D3[("D3 Audit metadata and import events")]
+  M -->|"account JWT"| P1
+  W -->|"staff JWT"| P2
+  AU -->|"verified claims"| P2
+  P1 -->|"own account / care"| D1
+  P2 -->|"authorized read/write"| D1
+  P2 -->|"admin import / own avatar"| P3
+  P3 -->|"validated content"| D2
+  D1 -->|"transactional audit"| D3
+  classDef conditional stroke-dasharray:6 4,fill:#fff3dc,stroke:#9b681c

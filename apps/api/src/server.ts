@@ -56,7 +56,7 @@ if (process.env.IMPORTS_ENABLED === 'true' || process.env.IMPORT_RETENTION_ENABL
 
 // Start API server
 if(process.env.AVATARS_ENABLED==='true'){
- const cleanup=()=>{void purgeAvatarObjects(pool).catch(()=>console.warn('Avatar cleanup unavailable; check storage and migration.'));};
+ const cleanup=()=>{void purgeAvatarObjects(pool).then(result=>{if(result?.failed)console.warn('Avatar cleanup will retry failed objects.');}).catch(()=>console.warn('Avatar cleanup unavailable; check storage and schema access.'));};
  cleanup();setInterval(cleanup,15*60*1000).unref();
 }
 app.listen(PORT, () => {

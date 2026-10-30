@@ -1,0 +1,16 @@
+flowchart TD
+  S(["Active staff opens appointments"])
+  I[/"Select existing patient, service, time and status"/]
+  V{"Service in fixed API enum and input valid?"}
+  F(["Reject invalid/custom service; known configuration mismatch"]):::conditional
+  T["Parameterized transaction: appointment and audit"]
+  D[("appointments: pending / confirmed / completed / cancelled")]
+  M["Linked mobile account reads own schedule only"]
+  U["Patient self-booking, policy enforcement and clinical chart unavailable"]:::conditional
+  S --> I
+  I --> V
+  V -->|"No"| F
+  V -->|"Yes"| T
+  T --> D
+  D --> M
+  classDef conditional stroke-dasharray:6 4,fill:#fff3dc,stroke:#9b681c

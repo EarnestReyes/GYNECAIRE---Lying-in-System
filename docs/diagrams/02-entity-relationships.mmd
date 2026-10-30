@@ -1,0 +1,153 @@
+erDiagram
+  auth_users {
+    uuid id PK
+  }
+  profiles {
+    uuid id PK
+    text full_name
+    text phone_number
+    text account_type
+    timestamptz created_at
+    timestamptz updated_at
+    text avatar_path
+  }
+  patients {
+    uuid id PK
+    text patient_number
+    uuid profile_id
+    text full_name
+    date date_of_birth
+    text contact_number
+    timestamptz created_at
+  }
+  staff_members {
+    uuid id PK
+    uuid profile_id
+    text staff_role
+    boolean is_active
+    timestamptz created_at
+  }
+  patient_verifications {
+    uuid id PK
+    uuid profile_id
+    uuid patient_id
+    text status
+    uuid reviewed_by
+    timestamptz reviewed_at
+    timestamptz created_at
+    text patient_kind
+    date date_of_birth
+    text contact_number
+    timestamptz consent_at
+  }
+  appointments {
+    uuid id PK
+    uuid patient_id
+    timestamptz appointment_date
+    text appointment_type
+    text status
+    text notes
+    timestamptz created_at
+  }
+  audit_logs {
+    uuid id PK
+    uuid actor_profile_id
+    text action
+    text entity_type
+    uuid entity_id
+    timestamptz created_at
+  }
+  account_preferences {
+    uuid profile_id PK
+    textArray interests
+    timestamptz updated_at
+  }
+  patient_import_jobs {
+    uuid id PK
+    uuid uploader_id
+    uuid idempotency_key
+    text filename
+    text source_system
+    text status
+    text file_hash
+    bytea source_cipher
+    jsonb headers
+    jsonb mapping
+    text date_order
+    integer revision
+    integer row_count
+    integer imported_count
+    integer skipped_count
+    timestamptz created_at
+    timestamptz expires_at
+    timestamptz completed_at
+  }
+  patient_import_rows {
+    uuid job_id
+    integer row_number
+    bytea data_cipher
+    textArray issues
+    textArray warnings
+    uuidArray matches
+    text decision
+    uuid patient_id
+  }
+  patient_import_provenance {
+    uuid id PK
+    uuid job_id
+    integer row_number
+    uuid patient_id
+    text source_system
+    text source_identifier_hash
+    bytea source_identifier_cipher
+    text source_file_hash
+    uuid imported_by
+    timestamptz imported_at
+  }
+  patient_import_events {
+    uuid id PK
+    uuid job_id
+    uuid actor_id
+    text action
+    jsonb details
+    timestamptz created_at
+  }
+  avatar_cleanup {
+    text object_path PK
+    timestamptz created_at
+  }
+  clinic_settings {
+    smallint id PK
+    text clinic_name
+    text description
+    text contact_number
+    text email
+    text address
+    text timezone
+    jsonb operating_hours
+    textArray services
+    jsonb appointment_policies
+    boolean patient_visible
+    integer version
+    timestamptz updated_at
+    uuid updated_by
+  }
+  auth_users ||--o| profiles : id
+  profiles o|--o| patients : profile_id
+  profiles ||--o| staff_members : profile_id
+  profiles ||--o| account_preferences : profile_id
+  profiles ||--o{ patient_verifications : profile_id
+  patients o|--o{ patient_verifications : patient_id
+  staff_members o|--o{ patient_verifications : reviewed_by
+  patients ||--o{ appointments : patient_id
+  profiles o|--o{ audit_logs : actor_profile_id
+  profiles ||--o{ patient_import_jobs : uploader_id
+  patient_import_jobs ||--o{ patient_import_rows : job_id
+  patients o|--o{ patient_import_rows : patient_id
+  patient_import_jobs ||--o{ patient_import_provenance : job_id
+  patient_import_rows ||--o| patient_import_provenance : job_id_row_number_composite
+  patients ||--o{ patient_import_provenance : patient_id
+  profiles ||--o{ patient_import_provenance : imported_by
+  patient_import_jobs ||--o{ patient_import_events : job_id
+  profiles ||--o{ patient_import_events : actor_id
+  profiles o|--o| clinic_settings : updated_by

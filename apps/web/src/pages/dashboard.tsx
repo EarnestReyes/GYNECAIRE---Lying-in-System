@@ -1,4 +1,5 @@
-﻿import { useResource } from '../hooks/use-resource';
+import type { SavedClinic } from '../lib/clinic-settings';
+import { useResource } from '../hooks/use-resource';
 import { dateLabel, manilaDate, type Overview, type Report, type StaffIdentity } from '../lib/portal';
 import { Badge, Empty, PageHeading, Panel, ResourceState } from '../components/ui';
 import { Icon, type IconName } from '../components/icon';
@@ -7,6 +8,7 @@ import { VisitChart } from './reports';
 
 export function Dashboard({ user }: { user: StaffIdentity }) {
   const { data, error, loading, refresh } = useResource<Overview>('/overview');
+  const clinic=useResource<{settings:SavedClinic|null}>('/clinic-settings');
   const today = manilaDate();
   const trends = useResource<Report>(`/reports?from=${today.slice(0,4)}-01-01&to=${today}`);
   const metrics: { label: string; value: number | string; note: string; icon: IconName; color: string }[] = [
@@ -17,6 +19,7 @@ export function Dashboard({ user }: { user: StaffIdentity }) {
   ];
   return <>
     <PageHeading eyebrow="YOUR CLINIC AT A GLANCE" title={`Welcome back, ${user.full_name.split(' ')[0]}.`} description="Here’s what’s happening at GYNECAIRE today." action={<div className="date-chip"><Icon name="appointments" size={17} />{dateLabel(today)}</div>} />
+    {clinic.data?.settings&&<p className="panel-note">{clinic.data.settings.clinic_name} ? {clinic.data.settings.timezone}</p>}
     <ResourceState loading={loading} error={error} retry={refresh} />
     <section className="metrics" aria-label="Clinic statistics">
       {metrics.map(metric => <article className="metric" key={metric.label}><div><span>{metric.label}</span><strong>{metric.value}</strong><small>{metric.note}</small></div><span className={`metric-icon ${metric.color}`}><Icon name={metric.icon} size={23} /></span></article>)}

@@ -14,7 +14,10 @@
     "test:imports:release": "node -e \"for (const p of ['csv-parse','exceljs','yauzl']) require.resolve(p)\" && npm run test:imports",
     "test:settings": "tsc --rootDir src --outDir .test-output/settings --declaration false --declarationMap false --sourceMap false && node --test --test-isolation=none .test-output/settings/validation/settings.test.js .test-output/settings/routes/settings-profile.test.js",
     "test:portal-http": "tsc --rootDir src --outDir .test-output/portal-http --declaration false --declarationMap false --sourceMap false && node --test --test-isolation=none .test-output/portal-http/routes/portal-router.test.js .test-output/portal-http/routes/staff-access.test.js",
-    "test:avatars": "tsc --rootDir src --outDir .test-output/avatars --declaration false --declarationMap false --sourceMap false && node --test --test-isolation=none .test-output/avatars/routes/profile-avatar.test.js"
+    "test:avatars": "tsc --rootDir src --outDir .test-output/avatars --declaration false --declarationMap false --sourceMap false && node --test --test-isolation=none .test-output/avatars/routes/profile-avatar.test.js",
+    "test:avatars:release": "node -e \"try{require.resolve('sharp')}catch{console.error('Avatar release blocked: install sharp and run real decoder tests.');process.exit(1)}\" && npm run test:avatars",
+    "test:avatars:storage": "tsc --rootDir src --outDir .test-output/avatar-live --declaration false --declarationMap false --sourceMap false && node .test-output/avatar-live/scripts/avatar-storage-smoke.js",
+    "test:clinic": "tsc --rootDir src --outDir .test-output/clinic --declaration false --declarationMap false --sourceMap false && node --test --test-isolation=none .test-output/clinic/routes/clinic-settings.test.js"
   },
   "keywords": [],
   "author": "",
@@ -22,17 +25,17 @@
   "type": "module",
   "dependencies": {
     "cors": "^2.8.6",
+    "csv-parse": "^6.1.0",
     "dotenv": "^18.0.9",
+    "exceljs": "^4.4.0",
     "express": "^5.3.0",
     "express-rate-limit": "^8.7.1",
     "helmet": "^8.3.0",
     "jose": "^6.2.13",
     "pg": "^8.23.1",
-    "zod": "^4.6.7",
-    "csv-parse": "^6.1.0",
-    "exceljs": "^4.4.0",
+    "sharp": "^0.35.5",
     "yauzl": "^3.2.0",
-    "sharp": "^0.35.5"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",

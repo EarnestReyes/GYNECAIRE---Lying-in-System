@@ -10,7 +10,7 @@ import { apiErrorHandler } from '../middleware/error-handler.js';
 test('existing portal endpoints require authentication before database access',async()=>{
  let calls=0;const pool={query:async()=>{calls++;throw new Error('Unexpected DB access');}} as unknown as Pool;
  const admin:RequestHandler=(_req,res)=>{res.sendStatus(403);};const app=express();app.use(createPortalRouter(pool,[authenticate],admin));const server=app.listen(0,'127.0.0.1');await new Promise<void>(resolve=>server.once('listening',resolve));const address=server.address();assert.ok(address&&typeof address==='object');
- try{for(const path of ['/session','/overview','/patients','/appointments','/reports','/members','/profile','/profile/avatar'])assert.equal((await fetch('http://127.0.0.1:'+address.port+path)).status,401);assert.equal(calls,0);}finally{server.closeAllConnections();await new Promise<void>(resolve=>server.close(()=>resolve()));}
+ try{for(const path of ['/session','/overview','/patients','/appointments','/reports','/members','/profile','/profile/avatar','/clinic-settings'])assert.equal((await fetch('http://127.0.0.1:'+address.port+path)).status,401);assert.equal(calls,0);}finally{server.closeAllConnections();await new Promise<void>(resolve=>server.close(()=>resolve()));}
 });
 test('connected patient/appointment/report HTTP routes preserve validation, audit transactions and final-status protection',async()=>{
  const id='d97a2474-5cdd-4c3d-9c6b-ddc740cd0434';let duplicate=false,failAudit=false,final=false,inserts=0,updates=0,commits=0,rollbacks=0,audit=0;let snapshot={inserts,updates,audit};const sqlCalls:string[]=[];

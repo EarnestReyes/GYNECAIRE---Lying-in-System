@@ -1,5 +1,7 @@
 # Portal navigation, themes and profile photos
 
+Avatar requirements and current live-schema findings are superseded by [the existing-schema avatar repair](staff-avatar-existing-schema.md), including the JPEG-only 3 MiB limit. The remaining sections below describe the original delivery.
+
 Source inspection and local checks: October 30, 2026. No deployed services or patient data were used. No migrations were applied and no commit was created. The existing untracked `BuildingScripts/` directory was left untouched.
 
 ## Findings and changes

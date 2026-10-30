@@ -1,0 +1,21 @@
+flowchart TD
+  S(["Open mobile or staff portal"])
+  I[/"Credentials / signup / recovery callback"/]
+  A["Supabase Auth validates and issues session"]
+  J["Express verifies signature, issuer and audience"]
+  D{"Staff portal request?"}
+  R["Read own profile and account route"]
+  T{"Active staff membership and staff/admin profile?"}
+  L(["Load permitted staff portal"])
+  X(["Deny staff access"])
+  G(["General or linked-patient experience"])
+  S --> I
+  I --> A
+  A --> J
+  J --> D
+  D -->|"No"| R
+  D -->|"Yes"| T
+  T -->|"Yes"| L
+  T -->|"No"| X
+  R --> G
+  classDef conditional stroke-dasharray:6 4,fill:#fff3dc,stroke:#9b681c

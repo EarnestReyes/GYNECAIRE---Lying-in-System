@@ -1,0 +1,23 @@
+flowchart TD
+  S(["Active staff edits own avatar"])
+  G{"Enabled, credential, decoder and private bucket ready?"}
+  X(["Disabled; initials fallback"]):::conditional
+  I[/"JPEG only, <=3 MiB; decode / dimensions / normalize"/]
+  U["Own UUID/random UUID.jpg; durable cleanup intent; private upload"]
+  T["Lock own profile; update path + audit transaction"]
+  D{"Commit successful?"}
+  C["Failure: retain cleanup intent; no invalid profile pointer"]
+  Y["Sign read URL; navigation/profile refresh"]
+  R["Replace/remove: commit own path change; retry obsolete-object cleanup"]
+  B(["No avatar: initials; private objects never public"])
+  S --> G
+  G -->|"No"| X
+  G -->|"Yes"| I
+  I --> U
+  U --> T
+  T --> D
+  D -->|"No"| C
+  D -->|"Yes"| Y
+  Y --> R
+  R --> B
+  classDef conditional stroke-dasharray:6 4,fill:#fff3dc,stroke:#9b681c

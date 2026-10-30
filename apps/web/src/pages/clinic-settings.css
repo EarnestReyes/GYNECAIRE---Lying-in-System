@@ -1,0 +1,8 @@
+.clinic-settings-form fieldset { display:grid; gap:28px; }
+.clinic-settings-form section { display:grid; gap:14px; min-width:0; }
+.clinic-settings-form h3 { color:var(--text); font-size:var(--font-card); }
+.clinic-settings-form p { color:var(--muted); font-size:var(--font-caption); line-height:1.7; }
+.clinic-hours-row { display:grid; grid-template-columns:minmax(100px,1fr) 100px 1fr 1fr; align-items:center; gap:14px; padding:12px 0; border-bottom:1px solid var(--border); }
+.clinic-service-row { display:flex; gap:12px; align-items:end; }.clinic-service-row label { flex:1; }
+.clinic-settings-form fieldset:disabled :is(input,textarea) { opacity:1; color:var(--text); }
+@media(max-width:680px){.clinic-hours-row { grid-template-columns:1fr 1fr; }.clinic-settings-form .form-grid { grid-template-columns:1fr; }}

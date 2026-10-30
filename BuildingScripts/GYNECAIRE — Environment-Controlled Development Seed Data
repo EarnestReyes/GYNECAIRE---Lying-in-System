@@ -1,0 +1,41 @@
+# GYNECAIRE — Environment-Controlled Development Seed Data
+
+Implement a safe, configurable development seed-data system for GYNECAIRE.
+
+I want to control synthetic test data using an environment variable:
+
+SEED_ENABLED=true
+SEED_ENABLED=false
+
+Expected behavior:
+
+- When true, development/demo data can be loaded and displayed.
+- When false, synthetic seed data must not appear in the application.
+- Real patient, appointment, staff, and clinic records must remain unchanged.
+- Production must always operate with development seed mode disabled.
+
+Requirements:
+
+1. Inspect existing `database/seeds`, migrations, API queries, web and mobile data services.
+2. Determine whether any existing seed records are already stored in Supabase.
+3. Prefer a separate development Supabase project for seed data, rather than mixing synthetic and real clinical records.
+4. Add SEED_ENABLED to the appropriate server-only environment configuration and `.env.example`.
+5. Do not expose this setting as an insecure browser-controlled toggle.
+6. When SEED_ENABLED=true, allow an explicit, idempotent development-only seed command.
+7. Do not automatically insert seed records on every application startup.
+8. When SEED_ENABLED=false, do not run seed scripts and do not return synthetic development records.
+9. Do not delete database records automatically when switching the flag to false.
+10. If the current architecture mixes synthetic and real records, propose a safe tagging and filtering strategy, but do not modify clinical schemas without approval.
+11. Prevent seed commands from running against production or an unverified Supabase project.
+12. Use fictional patient information, non-real contact details, and no hardcoded credentials.
+13. Ensure seed records respect foreign keys and database constraints.
+14. Add tests for both enabled and disabled configurations.
+15. Document exact setup, commands, expected behavior, and limitations in `database/seeds/README.md`.
+
+Do not execute seeds, delete records, apply migrations, or modify production data without my approval.
+
+Do not fabricate successful database tests.
+
+Provide a final report describing how SEED_ENABLED works and whether changing the flag requires an application restart.
+
+The goal is to make GYNECAIRE easy to demonstrate with synthetic data during development, while keeping real clinical information safe and completely separate.

@@ -1,0 +1,26 @@
+flowchart TD
+  S(["Welcome / guest / choose account intent"])
+  A["Register with Supabase Auth; trigger creates general profile"]
+  D{"Request clinic patient verification?"}
+  G(["General User / education / preferences"])
+  V[/"Submit demographics, new/existing intent and consent"/]
+  P["Persist pending request; no patient privileges"]
+  R{"Active staff reviews request"}
+  N["Reject; account remains general"]
+  Y["Approve: select/create patient; lock and link profile"]
+  B[("Commit verification, account category and audit")]
+  E(["Linked patient care reads"])
+  Q["Controlled resubmission after rejection"]
+  S --> A
+  A --> D
+  D -->|"No"| G
+  D -->|"Yes"| V
+  V --> P
+  P --> R
+  R -->|"Reject"| N
+  R -->|"Approve"| Y
+  Y -->|"link conflict rolls back"| B
+  B --> E
+  N --> Q
+  Q -->|"resubmit"| V
+  classDef conditional stroke-dasharray:6 4,fill:#fff3dc,stroke:#9b681c
